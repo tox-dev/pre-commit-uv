@@ -1,0 +1,1 @@
+import pre_commit_uv; pre_commit_uv._patch()
