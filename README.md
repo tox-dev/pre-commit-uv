@@ -9,6 +9,21 @@
 
 Use `uv` to create virtual environments and install packages for `pre-commit`.
 
+## Installation
+
+With pipx:
+
+```shell
+pipx install pre-commit
+pipx inject pre-commit pre-commit-uv
+```
+
+With uv:
+
+```shell
+uv tool install pre-commit --with pre-commit-uv --force-reinstall
+```
+
 ## Why?
 
 Compared to upstream `pre-commit` will speed up the initial seed operation. In general, upstream recommends caching the
