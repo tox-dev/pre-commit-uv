@@ -55,7 +55,8 @@ build.targets.sdist.include = [
   "/tests",
   "tox.ini",
 ]
-build.targets.wheel.force-include = { "src/pre_commit_uv_patch.pth" = "pre_commit_uv_patch.pth" }
+build.targets.wheel.only-include = [ "src" ]
+build.targets.wheel.sources = [ "src" ]
 version.source = "vcs"
 
 [tool.ruff]
@@ -86,8 +87,8 @@ lint.per-file-ignores."tests/**/*.py" = [
   "PLR0913", # any number of arguments in tests
   "PLR0917", # any number of arguments in tests
   "PLR2004", # Magic value used in comparison, consider replacing with a constant variable
+  "S",       # `subprocess` call: check for execution of untrusted input
   "S101",    # asserts allowed in tests...
-  "S603",    # `subprocess` call: check for execution of untrusted input
 ]
 lint.isort = { known-first-party = [
   "pre_commit_uv",
@@ -117,7 +118,7 @@ paths.source = [
   "**/src",
   "**\\src",
 ]
-report.fail_under = 50
+report.fail_under = 65
 run.parallel = true
 run.plugins = [
   "covdefaults",
