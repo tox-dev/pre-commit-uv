@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from importlib.metadata import version
+from subprocess import check_call
 from textwrap import dedent
 from typing import TYPE_CHECKING
 
@@ -23,6 +24,8 @@ def test_install(tmp_path: Path, caplog: pytest.LogCaptureFixture, monkeypatch: 
     conf_file = tmp_path / ".pre-commit-config.yaml"
     conf_file.write_text(dedent(conf))
     monkeypatch.setenv("PRE_COMMIT_HOME", str(tmp_path / "store"))
+    monkeypatch.chdir(tmp_path)
+    check_call(["git", "init"])
 
     main.main(["install-hooks", "-c", str(conf_file)])
 
