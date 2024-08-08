@@ -54,7 +54,9 @@ def _new_main(argv: list[str] | None = None) -> int:
         py = python.norm_version(version)
         if py is not None:
             venv_cmd.extend(("-p", py))
-        cmd_output_b(*venv_cmd, cwd="/")
+        env = os.environ.copy()
+        env["UV_INTERNAL__PARENT_INTERPRETER"] = sys.executable
+        cmd_output_b(*venv_cmd, cwd="/", env=env)
 
         with python.in_env(prefix, version):
             setup_cmd(prefix, (uv, "pip", "install", ".", *additional_dependencies))
