@@ -23,6 +23,17 @@ def _patch() -> None:
         from pre_commit import main  # noqa: PLC0415
 
         _original_main, main.main = main.main, _new_main
+        if "--version" in sys.argv:
+            from importlib.metadata import version as _metadata_version  # noqa: PLC0415
+
+            from pre_commit import constants  # noqa: PLC0415
+
+            constants.VERSION = (
+                f"{constants.VERSION} ("
+                f"pre-commit-uv={_metadata_version('pre-commit-uv')}, "
+                f"uv={_metadata_version('uv')}"
+                f")"
+            )
 
 
 def _new_main(argv: list[str] | None = None) -> int:
