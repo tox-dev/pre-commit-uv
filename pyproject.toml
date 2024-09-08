@@ -27,13 +27,14 @@ classifiers = [
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
 ]
 dynamic = [
   "version",
 ]
 dependencies = [
   "pre-commit>=3.8",
-  "uv>=0.2.33",
+  "uv>=0.4.7",
 ]
 optional-dependencies.test = [
   "covdefaults>=2.3",
@@ -100,6 +101,9 @@ lint.preview = true
 [tool.codespell]
 builtin = "clear,usage,en-GB_to_en-US"
 count = true
+
+[tool.pyproject-fmt]
+max_supported_python = "3.13"
 
 [tool.pytest]
 ini_options.testpaths = [

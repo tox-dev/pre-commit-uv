@@ -14,41 +14,64 @@ concurrency:
 
 jobs:
   test:
-    name: Run ${{ matrix.tox_env }} on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
+    name: test ${{ matrix.py }}
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        tox_env:
+        py:
+          - "3.13"
           - "3.12"
           - "3.11"
           - "3.10"
           - "3.9"
-          - type
-          - dev
-          - readme
-        os:
-          - ubuntu-latest
-          - windows-latest
-          - macos-latest
     steps:
-      - name: Set up uv for tox
-        uses: yezz123/setup-uv@v4
-      - name: Set up python for tox
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@v2
+        with:
+          enable-cache: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: setup python for tox
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Install tox-uv
+      - name: install tox
         run: uv pip install tox tox-uv --system
-      - name: Checkout source code
-        uses: actions/checkout@v4
-      - name: Set up ${{ startsWith(matrix.tox_env, '3.') && matrix.tox_env || '3.12' }} for test
+      - uses: actions/checkout@v4
+      - name: setup python for test ${{ matrix.py }}
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ startsWith(matrix.tox_env, '3.') && matrix.tox_env || '3.12' }}
-      - name: Set up test environment
-        run: tox -vv -e ${{ matrix.tox_env }} --notest
-      - name: Run test environment
-        run: tox -e  ${{ matrix.tox_env }} --skip-pkg-install
-        env:
-          PYTEST_ADDOPTS: "-vv --showlocals"
+          python-version: ${{ matrix.py }}
+          allow-prereleases: true
+      - name: setup test suite
+        run: tox run -vv --notest --skip-missing-interpreters false -e ${{ matrix.py }}
+      - name: run test suite
+        run: tox run  --skip-pkg-install -e ${{ matrix.py }}
+
+  check:
+    name: tox env ${{ matrix.tox_env }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        tox_env:
+          - type
+          - dev
+          - readme
+    steps:
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@v2
+        with:
+          enable-cache: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/checkout@v4
+      - name: setup Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: install tox
+        run: uv pip install tox tox-uv --system
+      - name: Setup test suite
+        run: tox -vv --notest --skip-missing-interpreters false -e ${{ matrix.tox_env }}
+      - name: Run test suite
+        run: tox --skip-pkg-install -e ${{ matrix.tox_env }}
