@@ -36,7 +36,7 @@ dependencies = [
   "pre-commit>=3.8",
   "uv>=0.4.7",
 ]
-optional-dependencies.test = [
+optional-dependencies.testing = [
   "covdefaults>=2.3",
   "pytest>=8.3.2",
   "pytest-cov>=5",
