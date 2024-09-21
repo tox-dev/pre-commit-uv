@@ -16,7 +16,11 @@ def _patch() -> None:
     calling_pre_commit = "FORCE_PRE_COMMIT_UV_PATCH" in os.environ
     if not calling_pre_commit and sys.argv and sys.argv[0]:  # must have arguments
         calling = sys.argv[1] if sys.argv[0] == sys.executable and len(sys.argv) >= 1 else sys.argv[0]
-        if os.path.split(calling)[1] == f"pre-commit{'.exe' if sys.platform == 'win32' else ''}":
+        if (
+            os.path.split(calling)[1] == f"pre-commit{'.exe' if sys.platform == 'win32' else ''}"
+            # case when pre-commit is called due to a git commit
+            or ("-m" in sys.argv and "hook-impl" in sys.argv)
+        ):
             calling_pre_commit = True
 
     if calling_pre_commit and os.environ.get("DISABLE_PRE_COMMIT_UV_PATCH") is None:
