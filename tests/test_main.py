@@ -34,29 +34,29 @@ def git_repo(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
 
 
 @pytest.fixture
-def reinstall_pkg(git_repo: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    # reinstall pre-commit-uv without having env-var set
-    monkeypatch.delenv("FORCE_PRE_COMMIT_UV_PATCH")
-    output = check_output(["uv", "pip", "freeze"], encoding="utf-8").splitlines()
-    wheel_file = next(pkg for pkg in output if pkg.startswith("pre-commit-uv")).split("@")[1].strip()
-    check_call(["uv", "pip", "install", wheel_file, "--reinstall"])
+def install_hook(git_repo: Path) -> None:
     check_call(["pre-commit", "install", "--install-hooks", "-c", str(git_repo / precommit_file)])
     check_call(["pre-commit", "clean"])  # ensures that 'install_environment' gets called
 
 
-@pytest.mark.usefixtures("reinstall_pkg")
+@pytest.mark.usefixtures("install_hook")
 def test_run_precommit_hook() -> None:
     hook_result = check_output([".git/hooks/pre-commit"], encoding="utf-8")
     assert f"[INFO] Using pre-commit with uv {uv} via pre-commit-uv {self}" in hook_result.splitlines()
 
 
-@pytest.mark.usefixtures("reinstall_pkg")
+@pytest.mark.usefixtures("install_hook")
 def test_call_as_module() -> None:
     run_result = check_output(["python3", "-m", "pre_commit", "run", "-a", "--color", "never"], encoding="utf-8")
     assert f"[INFO] Using pre-commit with uv {uv} via pre-commit-uv {self}" not in run_result.splitlines()
 
 
-def test_install(git_repo: Path, caplog: pytest.LogCaptureFixture) -> None:
+def test_install(git_repo: Path, caplog: pytest.LogCaptureFixture, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("FORCE_PRE_COMMIT_UV_PATCH", "1")
+
+    import pre_commit_uv  # noqa: PLC0415
+
+    pre_commit_uv._patch()  # noqa: SLF001
     main.main(["install-hooks", "-c", str(git_repo / precommit_file)])
 
     assert caplog.messages == [
