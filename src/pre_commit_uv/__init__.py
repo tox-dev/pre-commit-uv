@@ -65,13 +65,9 @@ def _new_main(argv: list[str] | None = None) -> int:
         logger = logging.getLogger("pre_commit")
         logger.info("Using pre-commit with uv %s via pre-commit-uv %s", uv_version(), self_version())
         uv = _uv()
-        venv_cmd = [uv, "venv", environment_dir(prefix, python.ENVIRONMENT_DIR, version)]
-        py = python.norm_version(version)
-        if py is not None:
-            venv_cmd.extend(("-p", py))
-        env = os.environ.copy()
-        env["UV_INTERNAL__PARENT_INTERPRETER"] = sys.executable
-        cmd_output_b(*venv_cmd, cwd="/", env=env)
+        py = python.norm_version(version) or os.environ.get("UV_PYTHON", sys.executable)
+        venv_cmd = [uv, "venv", environment_dir(prefix, python.ENVIRONMENT_DIR, version), "-p", py]
+        cmd_output_b(*venv_cmd, cwd="/")
 
         with python.in_env(prefix, version):
             setup_cmd(prefix, (uv, "pip", "install", ".", *additional_dependencies))
