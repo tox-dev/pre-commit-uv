@@ -96,11 +96,11 @@ def _new_main(argv: list[str] | None = None) -> int:
 
         prog = 'import sys;print(".".join(str(p) for p in sys.version_info[0:3]))'
         try:
-            return cast(str, cmd_output(exe, "-S", "-c", prog)[1].strip())
+            return cast("str", cmd_output(exe, "-S", "-c", prog)[1].strip())
         except CalledProcessError:
             return f"<<error retrieving version from {exe}>>"
 
     python.install_environment = _install_environment
     python._version_info = _version_info  # noqa: SLF001
     assert _original_main is not None  # noqa: S101
-    return cast(int, _original_main(argv))
+    return cast("int", _original_main(argv))
