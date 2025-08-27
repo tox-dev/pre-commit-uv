@@ -66,3 +66,97 @@ def test_install(git_repo: Path, caplog: pytest.LogCaptureFixture, monkeypatch: 
         "This may take a few minutes...",
         f"Using pre-commit with uv {uv} via pre-commit-uv {self}",
     ]
+
+
+test_install_with_uv_config_cases: list[tuple[str, str]] = [
+    (
+        "pyproject.toml",
+        """
+[[tool.uv.index]]
+name = "internal"
+url = "https://pypi.org/simple/"
+default = true
+""",
+    ),
+    (
+        "uv.toml",
+        """
+[[index]]
+name = "internal"
+url = "https://pypi.org/simple/"
+default = true
+""",
+    ),
+]
+
+
+@pytest.mark.parametrize(
+    ("file_name", "content"),
+    test_install_with_uv_config_cases,
+)
+def test_install_with_uv_config(
+    git_repo: Path,
+    caplog: pytest.LogCaptureFixture,
+    monkeypatch: pytest.MonkeyPatch,
+    file_name: str,
+    content: str,
+) -> None:
+    (git_repo / file_name).write_text(dedent(content))
+
+    monkeypatch.setenv("FORCE_PRE_COMMIT_UV_PATCH", "1")
+
+    import pre_commit_uv  # noqa: PLC0415
+
+    pre_commit_uv._patch()  # noqa: SLF001
+    main.main(["install-hooks", "-c", str(git_repo / precommit_file)])
+
+    assert caplog.messages == [
+        "Initializing environment for https://github.com/tox-dev/pyproject-fmt.",
+        "Installing environment for https://github.com/tox-dev/pyproject-fmt.",
+        "Once installed this environment will be reused.",
+        "This may take a few minutes...",
+        f"Using pre-commit with uv {uv} via pre-commit-uv {self}",
+    ]
+
+
+test_install_with_uv_config_raises_error_cases: list[tuple[str, str]] = [
+    (
+        "pyproject.toml",
+        """
+[[tool.uv.index]]
+name = "internal"
+url = "https://pypi.example/simple/"
+default = true
+""",
+    ),
+    (
+        "uv.toml",
+        """
+[[index]]
+name = "internal"
+url = "https://pypi.example/simple/"
+default = true
+""",
+    ),
+]
+
+
+@pytest.mark.parametrize(("file_name", "content"), test_install_with_uv_config_raises_error_cases)
+def test_install_with_uv_config_raises_error(
+    git_repo: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    file_name: str,
+    content: str,
+) -> None:
+    """Test to make sure that uv config is used for non default pypi repos."""
+    (git_repo / file_name).write_text(dedent(content))
+
+    monkeypatch.setenv("FORCE_PRE_COMMIT_UV_PATCH", "1")
+
+    import pre_commit_uv  # noqa: PLC0415
+
+    pre_commit_uv._patch()  # noqa: SLF001
+
+    # would raise SystemExit due to bad config
+    with pytest.raises(SystemExit):
+        main.main(["install-hooks", "-c", str(git_repo / precommit_file)])
