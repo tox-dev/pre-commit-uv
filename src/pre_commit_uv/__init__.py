@@ -59,18 +59,40 @@ def _new_main(argv: list[str] | None = None) -> int:
     ) -> None:
         import logging  # noqa: PLC0415
 
+        from pre_commit.git import get_root  # noqa: PLC0415
         from pre_commit.lang_base import environment_dir, setup_cmd  # noqa: PLC0415
         from pre_commit.util import cmd_output_b  # noqa: PLC0415
+
+        project_root_dir = get_root()
 
         logger = logging.getLogger("pre_commit")
         logger.info("Using pre-commit with uv %s via pre-commit-uv %s", uv_version(), self_version())
         uv = _uv()
         py = python.norm_version(version) or os.environ.get("UV_PYTHON", sys.executable)
-        venv_cmd = [uv, "venv", environment_dir(prefix, python.ENVIRONMENT_DIR, version), "-p", py]
+        venv_cmd = [
+            uv,
+            "--project",
+            project_root_dir,
+            "venv",
+            environment_dir(prefix, python.ENVIRONMENT_DIR, version),
+            "-p",
+            py,
+        ]
         cmd_output_b(*venv_cmd, cwd="/")
 
         with python.in_env(prefix, version):
-            setup_cmd(prefix, (uv, "pip", "install", ".", *additional_dependencies))
+            setup_cmd(
+                prefix,
+                (
+                    uv,
+                    "--project",
+                    project_root_dir,
+                    "pip",
+                    "install",
+                    ".",
+                    *additional_dependencies,
+                ),
+            )
 
     @cache
     def _uv() -> str:
