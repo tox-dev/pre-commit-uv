@@ -68,6 +68,21 @@ def test_install(git_repo: Path, caplog: pytest.LogCaptureFixture, monkeypatch: 
     ]
 
 
+def test_install_seeds_pip(git_repo: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("FORCE_PRE_COMMIT_UV_PATCH", "1")
+
+    import pre_commit_uv  # noqa: PLC0415
+
+    pre_commit_uv._patch()  # noqa: SLF001
+    main.main(["install-hooks", "-c", str(git_repo / precommit_file)])
+
+    env_dirs = list((git_repo / "store").rglob("py_env-*"))
+    assert env_dirs, "expected at least one hook environment"
+    py = next((env_dirs[0] / "bin").glob("python*"))
+    result = check_output([str(py), "-c", "import pip"], encoding="utf-8")
+    assert not result
+
+
 test_install_with_uv_config_cases: list[tuple[str, str]] = [
     (
         "pyproject.toml",
