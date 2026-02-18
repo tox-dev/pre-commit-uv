@@ -74,6 +74,7 @@ def _new_main(argv: list[str] | None = None) -> int:
             "--project",
             project_root_dir,
             "venv",
+            "--seed",
             environment_dir(prefix, python.ENVIRONMENT_DIR, version),
             "-p",
             py,
