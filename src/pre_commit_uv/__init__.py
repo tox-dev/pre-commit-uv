@@ -9,21 +9,28 @@ import sys
 _original_main = None
 
 
+def _is_calling_pre_commit() -> bool:
+    if "FORCE_PRE_COMMIT_UV_PATCH" in os.environ:
+        return True
+    if not sys.argv or not sys.argv[0]:
+        return False
+    # case when pre-commit is called via python -m pre_commit
+    if sys.argv[0] == "-m" and "-m" in sys.orig_argv and "pre_commit" in sys.orig_argv:
+        return True
+    calling = sys.argv[1] if sys.argv[0] == sys.executable and len(sys.argv) >= 1 else sys.argv[0]
+    # case when pre-commit is called directly
+    if os.path.split(calling)[1] == f"pre-commit{'.exe' if sys.platform == 'win32' else ''}":
+        return True
+    # case when pre-commit is called due to a git commit
+    return "-m" in sys.argv and "hook-impl" in sys.argv
+
+
 def _patch() -> None:
     global _original_main
     if _original_main is not None:  # already patched, nothing more to do
         return
-    calling_pre_commit = "FORCE_PRE_COMMIT_UV_PATCH" in os.environ
-    if not calling_pre_commit and sys.argv and sys.argv[0]:  # must have arguments
-        calling = sys.argv[1] if sys.argv[0] == sys.executable and len(sys.argv) >= 1 else sys.argv[0]
-        if (
-            os.path.split(calling)[1] == f"pre-commit{'.exe' if sys.platform == 'win32' else ''}"
-            # case when pre-commit is called due to a git commit
-            or ("-m" in sys.argv and "hook-impl" in sys.argv)
-        ):
-            calling_pre_commit = True
 
-    if calling_pre_commit and os.environ.get("DISABLE_PRE_COMMIT_UV_PATCH") is None:
+    if _is_calling_pre_commit() and os.environ.get("DISABLE_PRE_COMMIT_UV_PATCH") is None:
         from pre_commit import main  # noqa: PLC0415
 
         _original_main, main.main = main.main, _new_main
