@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import sys
 from importlib.metadata import version
 from subprocess import check_call, check_output
 from textwrap import dedent
@@ -47,8 +48,8 @@ def test_run_precommit_hook() -> None:
 
 @pytest.mark.usefixtures("install_hook")
 def test_call_as_module() -> None:
-    run_result = check_output(["python3", "-m", "pre_commit", "run", "-a", "--color", "never"], encoding="utf-8")
-    assert f"[INFO] Using pre-commit with uv {uv} via pre-commit-uv {self}" not in run_result.splitlines()
+    run_result = check_output([sys.executable, "-m", "pre_commit", "run", "-a", "--color", "never"], encoding="utf-8")
+    assert f"[INFO] Using pre-commit with uv {uv} via pre-commit-uv {self}" in run_result.splitlines()
 
 
 def test_install(git_repo: Path, caplog: pytest.LogCaptureFixture, monkeypatch: pytest.MonkeyPatch) -> None:
