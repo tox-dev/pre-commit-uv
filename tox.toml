@@ -53,8 +53,8 @@ commands = [
 
 [env.type]
 description = "run type check on code base"
-deps = [ "mypy==1.18.2" ]
-commands = [ [ "mypy", "src" ], [ "mypy", "tests" ] ]
+deps = [ "ty>=0.0.17" ]
+commands = [ [ "ty", "check", "--output-format", "concise", "--error-on-warning", "." ] ]
 
 [env.dev]
 description = "generate a DEV environment"
