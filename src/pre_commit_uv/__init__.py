@@ -5,6 +5,10 @@ from __future__ import annotations
 # only import built-ins at top level to avoid interpreter startup overhead
 import os
 import sys
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 _original_main = None
 
@@ -33,7 +37,7 @@ def _patch() -> None:
     if _is_calling_pre_commit() and os.environ.get("DISABLE_PRE_COMMIT_UV_PATCH") is None:
         from pre_commit import main  # noqa: PLC0415
 
-        _original_main, main.main = main.main, _new_main
+        _original_main, main.main = main.main, _new_main  # ty: ignore[invalid-assignment]
         if "--version" in sys.argv:
             from importlib.metadata import version as _metadata_version  # noqa: PLC0415
 
@@ -47,16 +51,14 @@ def _patch() -> None:
             )
 
 
-def _new_main(argv: list[str] | None = None) -> int:
+def _new_main(argv: Sequence[str] | None = None) -> int:
     # imports applied locally to avoid patching import overhead cost
     from functools import cache  # noqa: PLC0415
-    from typing import TYPE_CHECKING, cast  # noqa: PLC0415
+    from typing import cast  # noqa: PLC0415
 
     from pre_commit.languages import python  # noqa: PLC0415
 
     if TYPE_CHECKING:
-        from collections.abc import Sequence  # noqa: PLC0415
-
         from pre_commit.prefix import Prefix  # noqa: PLC0415
 
     def _install_environment(
@@ -126,11 +128,11 @@ def _new_main(argv: list[str] | None = None) -> int:
 
         prog = 'import sys;print(".".join(str(p) for p in sys.version_info[0:3]))'
         try:
-            return cast("str", cmd_output(exe, "-S", "-c", prog)[1].strip())
+            return cmd_output(exe, "-S", "-c", prog)[1].strip()
         except CalledProcessError:
             return f"<<error retrieving version from {exe}>>"
 
-    python.install_environment = _install_environment
+    python.install_environment = _install_environment  # ty: ignore[invalid-assignment]
     python._version_info = _version_info  # noqa: SLF001
     assert _original_main is not None  # noqa: S101
     return cast("int", _original_main(argv))

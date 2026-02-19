@@ -128,11 +128,5 @@ report.fail_under = 63
 html.show_contexts = true
 html.skip_covered = false
 
-[tool.mypy]
-show_error_codes = true
-strict = true
-overrides = [
-  { module = [
-    "pre_commit.*",
-  ], ignore_missing_imports = true },
-]
+[tool.ty]
+environment.python-version = "3.14"
