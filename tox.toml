@@ -6,7 +6,7 @@ skip_missing_interpreters = true
 description = "run the unit tests with pytest under {env_name}"
 package = "wheel"
 wheel_build_env = ".pkg"
-extras = [ "testing" ]
+dependency_groups = [ "test" ]
 pass_env = [ "PYTEST_*" ]
 set_env.COVERAGE_FILE = { replace = "env", name = "COVERAGE_FILE", default = "{work_dir}{/}.coverage.{env_name}" }
 commands = [
@@ -38,13 +38,13 @@ commands = [
 [env.fix]
 description = "format the code base to adhere to our styles, and complain about what we cannot do automatically"
 skip_install = true
-deps = [ "pre-commit-uv>=4.1.1" ]
+dependency_groups = [ "lint" ]
 commands = [ [ "pre-commit", "run", "--all-files", "--show-diff-on-failure" ] ]
 
 [env.pkg_meta]
 description = "check that the long description is valid"
 skip_install = true
-deps = [ "check-wheel-contents>=0.6.3", "twine>=6.2", "uv>=0.9.1" ]
+dependency_groups = [ "pkg-meta" ]
 commands = [
   [ "uv", "build", "--sdist", "--wheel", "--out-dir", "{env_tmp_dir}", "." ],
   [ "twine", "check", "{env_tmp_dir}{/}*" ],
@@ -53,12 +53,13 @@ commands = [
 
 [env.type]
 description = "run type check on code base"
-deps = [ "ty>=0.0.17" ]
+dependency_groups = [ "type" ]
 commands = [ [ "ty", "check", "--output-format", "concise", "--error-on-warning", "." ] ]
 
 [env.dev]
 description = "generate a DEV environment"
 package = "editable"
+dependency_groups = [ "dev" ]
 commands = [
   [ "uv", "tree" ],
   [ "python", "-c", "import sys; print(sys.executable)" ],

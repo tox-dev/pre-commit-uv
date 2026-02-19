@@ -36,16 +36,27 @@ dependencies = [
   "pre-commit>=4.3",
   "uv>=0.9.1",
 ]
-optional-dependencies.testing = [
+urls."Bug Tracker" = "https://github.com/tox-dev/pre-commit-uv/issues"
+urls."Changelog" = "https://github.com/tox-dev/pre-commit-uv/releases"
+urls."Source Code" = "https://github.com/tox-dev/pre-commit-uv"
+urls.Documentation = "https://github.com/tox-dev/pre-commit-uv/"
+
+[dependency-groups]
+dev = [
+  { include-group = "lint" },
+  { include-group = "pkg-meta" },
+  { include-group = "test" },
+  { include-group = "type" },
+]
+test = [
   "covdefaults>=2.3",
   "pytest>=8.4.2",
   "pytest-cov>=7",
   "pytest-mock>=3.15.1",
 ]
-urls."Bug Tracker" = "https://github.com/tox-dev/pre-commit-uv/issues"
-urls."Changelog" = "https://github.com/tox-dev/pre-commit-uv/releases"
-urls."Source Code" = "https://github.com/tox-dev/pre-commit-uv"
-urls.Documentation = "https://github.com/tox-dev/pre-commit-uv/"
+type = [ "ty>=0.0.17", { include-group = "test" }, ]
+lint = [ "pre-commit-uv>=4.1.1", ]
+pkg-meta = [ "check-wheel-contents>=0.6.3", "twine>=6.2", "uv>=0.9.1", ]
 
 [tool.hatch]
 build.dev-mode-dirs = [
