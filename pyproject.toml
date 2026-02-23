@@ -2,7 +2,7 @@
 build-backend = "hatchling.build"
 requires = [
   "hatch-vcs>=0.5",
-  "hatchling>=1.27",
+  "hatchling>=1.28",
 ]
 
 [project]
@@ -59,12 +59,12 @@ type = [
   { include-group = "test" },
 ]
 lint = [
-  "pre-commit-uv>=4.1.1",
+  "pre-commit-uv>=4.2",
 ]
 pkg-meta = [
   "check-wheel-contents>=0.6.3",
   "twine>=6.2",
-  "uv>=0.9.1",
+  "uv>=0.10.2",
 ]
 
 [tool.hatch]

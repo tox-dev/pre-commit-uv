@@ -1,4 +1,4 @@
-requires = [ "tox>=4.31", "tox-uv>=1.28.1" ]
+requires = [ "tox>=4.34.1", "tox-uv>=1.29" ]
 env_list = [ "3.14", "3.13", "3.12", "3.11", "3.10", "3.9", "3.8", "fix", "pkg_meta", "type" ]
 skip_missing_interpreters = true
 
@@ -61,7 +61,7 @@ description = "generate a DEV environment"
 package = "editable"
 dependency_groups = [ "dev" ]
 commands = [
-  [ "uv", "tree" ],
+  [ "uv", "pip", "tree" ],
   [ "python", "-c", "import sys; print(sys.executable)" ],
   [ "python", "task/dev_pth.py", "{env_site_packages_dir}" ],
 ]
