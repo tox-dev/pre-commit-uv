@@ -14,7 +14,7 @@ commands = [
     "python",
     "-m",
     "pytest",
-    { replace = "posargs", extend = true, default = [
+    { replace = "posargs", default = [
       "--cov",
       "{env_site_packages_dir}{/}pre_commit_uv",
       "--cov",
@@ -31,7 +31,7 @@ commands = [
       "--junitxml",
       "{work_dir}{/}junit.{env_name}.xml",
       "tests",
-    ] },
+    ], extend = true },
   ],
 ]
 
