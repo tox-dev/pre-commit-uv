@@ -37,8 +37,8 @@ dependencies = [
   "uv>=0.9.1",
 ]
 urls."Bug Tracker" = "https://github.com/tox-dev/pre-commit-uv/issues"
-urls."Changelog" = "https://github.com/tox-dev/pre-commit-uv/releases"
 urls."Source Code" = "https://github.com/tox-dev/pre-commit-uv"
+urls.Changelog = "https://github.com/tox-dev/pre-commit-uv/releases"
 urls.Documentation = "https://github.com/tox-dev/pre-commit-uv/"
 
 [dependency-groups]
