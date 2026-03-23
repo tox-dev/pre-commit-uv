@@ -125,6 +125,9 @@ count = true
 [tool.pyproject-fmt]
 max_supported_python = "3.14"
 
+[tool.ty]
+environment.python-version = "3.14"
+
 [tool.pytest]
 ini_options.testpaths = [
   "tests",
@@ -147,6 +150,3 @@ paths.source = [
 report.fail_under = 63
 html.show_contexts = true
 html.skip_covered = false
-
-[tool.ty]
-environment.python-version = "3.14"
