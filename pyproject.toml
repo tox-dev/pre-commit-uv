@@ -68,6 +68,7 @@ pkg-meta = [
 ]
 
 [tool.hatch]
+version.source = "vcs"
 build.dev-mode-dirs = [
   "src",
 ]
@@ -78,7 +79,6 @@ build.targets.sdist.include = [
 ]
 build.targets.wheel.only-include = [ "src" ]
 build.targets.wheel.sources = [ "src" ]
-version.source = "vcs"
 
 [tool.ruff]
 line-length = 120
