@@ -54,7 +54,6 @@ def _patch() -> None:
 def _new_main(argv: Sequence[str] | None = None) -> int:
     # imports applied locally to avoid patching import overhead cost
     from functools import cache  # noqa: PLC0415
-    from typing import cast  # noqa: PLC0415
 
     from pre_commit.languages import python  # noqa: PLC0415
 
@@ -135,4 +134,4 @@ def _new_main(argv: Sequence[str] | None = None) -> int:
     python.install_environment = _install_environment  # ty: ignore[invalid-assignment]
     python._version_info = _version_info  # noqa: SLF001
     assert _original_main is not None  # noqa: S101
-    return cast("int", _original_main(argv))
+    return _original_main(argv)
