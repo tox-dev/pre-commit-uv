@@ -11,8 +11,10 @@ from pre_commit_uv import _health_check
 if TYPE_CHECKING:
     from pathlib import Path
 
-version = "3.14"
-actual_version = ".".join(str(p) for p in sys.version_info[0:3])
+version = "default"
+major_minor = f"{sys.version_info[0]}.{sys.version_info[1]}"
+full_version = ".".join(str(p) for p in sys.version_info[0:3])
+wrong_version = f"{sys.version_info[0]}.{sys.version_info[1] + 1}"
 
 
 def _make_env(tmp_path: Path, pyvenv_cfg: str | None) -> Prefix:
@@ -27,35 +29,35 @@ def _make_env(tmp_path: Path, pyvenv_cfg: str | None) -> Prefix:
 
 def test_health_check_truncated_version_passes(tmp_path: Path) -> None:
     """uv >=0.11.22 writes only the major.minor into pyvenv.cfg (see issue #152)."""
-    prefix = _make_env(tmp_path, f"version_info = 3.14\nbase-executable = {sys.executable}\n")
+    prefix = _make_env(tmp_path, f"version_info = {major_minor}\nbase-executable = {sys.executable}\n")
 
     assert _health_check(prefix, version) is None
 
 
 def test_health_check_full_version_passes(tmp_path: Path) -> None:
-    prefix = _make_env(tmp_path, f"version_info = {actual_version}\nbase-executable = {sys.executable}\n")
+    prefix = _make_env(tmp_path, f"version_info = {full_version}\nbase-executable = {sys.executable}\n")
 
     assert _health_check(prefix, version) is None
 
 
 def test_health_check_no_base_executable_passes(tmp_path: Path) -> None:
-    prefix = _make_env(tmp_path, "version_info = 3.14\n")
+    prefix = _make_env(tmp_path, f"version_info = {major_minor}\n")
 
     assert _health_check(prefix, version) is None
 
 
 def test_health_check_version_mismatch_fails(tmp_path: Path) -> None:
-    prefix = _make_env(tmp_path, "version_info = 2.7\n")
+    prefix = _make_env(tmp_path, f"version_info = {wrong_version}\n")
 
     result = _health_check(prefix, version)
 
     assert result is not None
     assert "virtualenv python version did not match created version" in result
-    assert "- expected version: 2.7" in result
+    assert f"- expected version: {wrong_version}" in result
 
 
 def test_health_check_base_executable_mismatch_fails(tmp_path: Path) -> None:
-    prefix = _make_env(tmp_path, "version_info = 3.14\nbase-executable = /does/not/exist/python\n")
+    prefix = _make_env(tmp_path, f"version_info = {major_minor}\nbase-executable = /does/not/exist/python\n")
 
     result = _health_check(prefix, version)
 
