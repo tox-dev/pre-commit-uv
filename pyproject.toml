@@ -89,7 +89,6 @@ lint.select = [
   "ALL",
 ]
 lint.ignore = [
-  "ANN101", # no type annotation for self
   "ANN401", # allow Any as type annotation
   "COM812", # Conflict with formatter
   "CPY",    # No copyright statements
