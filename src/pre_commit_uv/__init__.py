@@ -4,11 +4,20 @@ from __future__ import annotations
 
 # only import built-ins at top level to avoid interpreter startup overhead
 import os
+import pathlib
 import sys
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence
+    from collections.abc import Callable, Sequence
+    from typing import Protocol
+
+    from pre_commit.prefix import Prefix
+
+    class _PatchablePython(Protocol):
+        install_environment: Callable[[Prefix, str, Sequence[str]], None]
+        health_check: Callable[[Prefix, str], str | None]
+
 
 _original_main = None
 
@@ -56,9 +65,6 @@ def _new_main(argv: Sequence[str] | None = None) -> int:
     from functools import cache  # noqa: PLC0415
 
     from pre_commit.languages import python  # noqa: PLC0415
-
-    if TYPE_CHECKING:
-        from pre_commit.prefix import Prefix  # noqa: PLC0415
 
     def _install_environment(
         prefix: Prefix,
@@ -121,17 +127,48 @@ def _new_main(argv: Sequence[str] | None = None) -> int:
 
         return _metadata_version("uv")
 
-    @cache
-    def _version_info(exe: str) -> str:
-        from pre_commit.util import CalledProcessError, cmd_output  # noqa: PLC0415
-
-        prog = 'import sys;print(".".join(str(p) for p in sys.version_info[0:3]))'
-        try:
-            return cmd_output(exe, "-S", "-c", prog)[1].strip()
-        except CalledProcessError:
-            return f"<<error retrieving version from {exe}>>"
-
-    python.install_environment = _install_environment  # ty: ignore[invalid-assignment]
-    python._version_info = _version_info  # noqa: SLF001
+    patched = cast("_PatchablePython", python)
+    patched.install_environment = _install_environment
+    patched.health_check = _health_check
     assert _original_main is not None  # noqa: S101
     return _original_main(argv)
+
+
+def _version_info(exe: str) -> str:
+    from pre_commit.util import CalledProcessError, cmd_output  # noqa: PLC0415
+
+    prog = 'import sys;print(".".join(str(p) for p in sys.version_info[0:3]))'
+    try:
+        return cmd_output(exe, "-S", "-c", prog)[1].strip()
+    except CalledProcessError:
+        return f"<<error retrieving version from {exe}>>"
+
+
+def _health_check(prefix: Prefix, version: str) -> str | None:
+    # uv may record fewer version components in pyvenv.cfg than pre-commit expects (e.g. "3.14" vs "3.14.6"),
+    # so compare only the components uv actually wrote rather than requiring an exact string match
+    from pre_commit.lang_base import environment_dir  # noqa: PLC0415
+    from pre_commit.languages import python  # noqa: PLC0415
+    from pre_commit.util import win_exe  # noqa: PLC0415
+
+    pyvenv_cfg = pathlib.Path(environment_dir(prefix, python.ENVIRONMENT_DIR, version)) / "pyvenv.cfg"
+    if not pyvenv_cfg.exists():
+        return "pyvenv.cfg does not exist (old virtualenv?)"
+
+    cfg = python._read_pyvenv_cfg(str(pyvenv_cfg))  # noqa: SLF001
+    if "version_info" not in cfg:
+        return "created virtualenv's pyvenv.cfg is missing `version_info`"
+    expected = cfg["version_info"].split(".")
+
+    py_exe = prefix.path(python.bin_dir(str(pyvenv_cfg.parent)), win_exe("python"))
+    targets = [("virtualenv python", py_exe)]
+    if "base-executable" in cfg:
+        targets.append(("base executable", cfg["base-executable"]))
+    for label, exe in targets:
+        if (actual := _version_info(exe)).split(".")[: len(expected)] != expected:
+            return (
+                f"{label} version did not match created version:\n"
+                f"- actual version: {actual}\n"
+                f"- expected version: {cfg['version_info']}\n"
+            )
+    return None
