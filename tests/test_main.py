@@ -55,9 +55,9 @@ def test_call_as_module() -> None:
 def test_install(git_repo: Path, caplog: pytest.LogCaptureFixture, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("FORCE_PRE_COMMIT_UV_PATCH", "1")
 
-    import pre_commit_uv  # noqa: PLC0415
+    import pre_commit_uv  # ruff:ignore[import-outside-top-level]
 
-    pre_commit_uv._patch()  # noqa: SLF001
+    pre_commit_uv._patch()  # ruff:ignore[private-member-access]
     main.main(["install-hooks", "-c", str(git_repo / precommit_file)])
 
     assert caplog.messages == [
@@ -72,9 +72,9 @@ def test_install(git_repo: Path, caplog: pytest.LogCaptureFixture, monkeypatch: 
 def test_install_seeds_pip(git_repo: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("FORCE_PRE_COMMIT_UV_PATCH", "1")
 
-    import pre_commit_uv  # noqa: PLC0415
+    import pre_commit_uv  # ruff:ignore[import-outside-top-level]
 
-    pre_commit_uv._patch()  # noqa: SLF001
+    pre_commit_uv._patch()  # ruff:ignore[private-member-access]
     main.main(["install-hooks", "-c", str(git_repo / precommit_file)])
 
     env_dirs = list((git_repo / "store").rglob("py_env-*"))
@@ -121,9 +121,9 @@ def test_install_with_uv_config(
 
     monkeypatch.setenv("FORCE_PRE_COMMIT_UV_PATCH", "1")
 
-    import pre_commit_uv  # noqa: PLC0415
+    import pre_commit_uv  # ruff:ignore[import-outside-top-level]
 
-    pre_commit_uv._patch()  # noqa: SLF001
+    pre_commit_uv._patch()  # ruff:ignore[private-member-access]
     main.main(["install-hooks", "-c", str(git_repo / precommit_file)])
 
     assert caplog.messages == [
@@ -169,9 +169,9 @@ def test_install_with_uv_config_raises_error(
 
     monkeypatch.setenv("FORCE_PRE_COMMIT_UV_PATCH", "1")
 
-    import pre_commit_uv  # noqa: PLC0415
+    import pre_commit_uv  # ruff:ignore[import-outside-top-level]
 
-    pre_commit_uv._patch()  # noqa: SLF001
+    pre_commit_uv._patch()  # ruff:ignore[private-member-access]
 
     # would raise SystemExit due to bad config
     with pytest.raises(SystemExit):
