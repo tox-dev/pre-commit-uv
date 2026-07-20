@@ -1,4 +1,4 @@
-"""For editable installs the pth file is not applied, so we have to manually add it."""  # noqa: INP001
+"""For editable installs the pth file is not applied, so we have to manually add it."""  # ruff:ignore[implicit-namespace-package]
 
 from __future__ import annotations
 
