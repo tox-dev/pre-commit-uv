@@ -2,7 +2,7 @@
 build-backend = "hatchling.build"
 requires = [
   "hatch-vcs>=0.5",
-  "hatchling>=1.28",
+  "hatchling>=1.32.4",
 ]
 
 [project]
@@ -34,8 +34,8 @@ dynamic = [
   "version",
 ]
 dependencies = [
-  "pre-commit>=4.3",
-  "uv>=0.9.1",
+  "pre-commit>=4.6.2",
+  "uv>=0.12.22",
 ]
 urls."Bug Tracker" = "https://github.com/tox-dev/pre-commit-uv/issues"
 urls."Source Code" = "https://github.com/tox-dev/pre-commit-uv"
@@ -51,12 +51,12 @@ dev = [
 ]
 test = [
   "covdefaults>=2.3",
-  "pytest>=8.4.2",
-  "pytest-cov>=7",
-  "pytest-mock>=3.15.1",
+  "pytest>=9.1.1",
+  "pytest-cov>=7.1",
+  "pytest-mock>=3.16",
 ]
 type = [
-  "ty>=0.0.17",
+  "ty>=0.0.84",
   { include-group = "test" },
 ]
 lint = [
@@ -64,8 +64,8 @@ lint = [
 ]
 pkg-meta = [
   "check-wheel-contents>=0.6.3",
-  "twine>=6.2",
-  "uv>=0.10.2",
+  "twine>=7",
+  "uv>=0.12.22",
 ]
 
 [tool.hatch]
