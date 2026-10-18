@@ -17,6 +17,18 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+      - name: Require a changelog section for the tag
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          if [[ ! "$TAG" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::unexpected release tag $TAG"
+            exit 1
+          fi
+          if ! grep -qF "## $TAG (" CHANGELOG.md; then
+            echo "::error::CHANGELOG.md has no section for $TAG"
+            exit 1
+          fi
       - name: Install the latest version of uv
         uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
         with:
