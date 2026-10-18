@@ -4,8 +4,6 @@
 
 ## 4.4.0 (2026-10-10)
 
-<!-- Release notes generated using configuration in .github/release.yaml at main -->
-
 ### What's Changed
 
 - 🔧 chore: batch dependency updates weekly on Tuesday by @gaborbernat in
@@ -20,8 +18,6 @@
 No user-facing changes. This tag includes Python 3.15 CI coverage and dependency updates.
 
 ## 4.2.2 (2026-06-19)
-
-<!-- Release notes generated using configuration in .github/release.yaml at main -->
 
 ### What's Changed
 
@@ -41,8 +37,6 @@ No user-facing changes. This tag includes Python 3.15 CI coverage and dependency
 
 ## 4.2.1 (2026-02-18)
 
-<!-- Release notes generated using configuration in .github/release.yml at main -->
-
 ### What's Changed
 
 - 🐛 fix(venv): seed pip into hook environments by @gaborbernat in https://github.com/tox-dev/pre-commit-uv/pull/114
@@ -51,8 +45,6 @@ No user-facing changes. This tag includes Python 3.15 CI coverage and dependency
 **Full Changelog**: https://github.com/tox-dev/pre-commit-uv/compare/4.2.0...4.2.1
 
 ## 4.2.0 (2025-10-09)
-
-<!-- Release notes generated using configuration in .github/release.yml at main -->
 
 ### What's Changed
 
@@ -67,8 +59,6 @@ No user-facing changes. This tag includes Python 3.15 CI coverage and dependency
 
 ## 4.1.5 (2025-08-27)
 
-<!-- Release notes generated using configuration in .github/release.yml at main -->
-
 ### What's Changed
 
 - Use current project config for uv by @aaravind100 in https://github.com/tox-dev/pre-commit-uv/pull/79
@@ -81,8 +71,6 @@ No user-facing changes. This tag includes Python 3.15 CI coverage and dependency
 
 ## 4.1.4 (2024-10-29)
 
-<!-- Release notes generated using configuration in .github/release.yml at main -->
-
 ### What's Changed
 
 - Respect UV_PYTHON and fallback to sys.executable by @gaborbernat in https://github.com/tox-dev/pre-commit-uv/pull/29
@@ -90,8 +78,6 @@ No user-facing changes. This tag includes Python 3.15 CI coverage and dependency
 **Full Changelog**: https://github.com/tox-dev/pre-commit-uv/compare/4.1.3...4.1.4
 
 ## 4.1.3 (2024-09-23)
-
-<!-- Release notes generated using configuration in .github/release.yml at main -->
 
 ### What's Changed
 
@@ -106,8 +92,6 @@ No user-facing changes. This tag includes Python 3.15 CI coverage and dependency
 
 ## 4.1.2 (2024-09-18)
 
-<!-- Release notes generated using configuration in .github/release.yml at main -->
-
 ### What's Changed
 
 - Improve the CI by @gaborbernat in https://github.com/tox-dev/pre-commit-uv/pull/16
@@ -115,8 +99,6 @@ No user-facing changes. This tag includes Python 3.15 CI coverage and dependency
 **Full Changelog**: https://github.com/tox-dev/pre-commit-uv/compare/4.1.1...4.1.2
 
 ## 4.1.1 (2024-09-08)
-
-<!-- Release notes generated using configuration in .github/release.yml at main -->
 
 ### What's Changed
 
@@ -130,8 +112,6 @@ No user-facing changes. This tag includes Python 3.15 CI coverage and dependency
 
 ## 4.1.0 (2024-08-12)
 
-<!-- Release notes generated using configuration in .github/release.yml at main -->
-
 ### What's Changed
 
 - Specify pre-commit-uv and uv version in --version by @gaborbernat in https://github.com/tox-dev/pre-commit-uv/pull/7
@@ -144,8 +124,6 @@ No user-facing changes. This tag includes Python 3.15 CI coverage and dependency
 
 ## 4.0.3 (2024-08-08)
 
-<!-- Release notes generated using configuration in .github/release.yml at main -->
-
 ### What's Changed
 
 - Ensure uv knows caller Python by @gaborbernat in https://github.com/tox-dev/pre-commit-uv/pull/5
@@ -154,15 +132,11 @@ No user-facing changes. This tag includes Python 3.15 CI coverage and dependency
 
 ## 4.0.2 (2024-08-07)
 
-<!-- Release notes generated using configuration in .github/release.yml at main -->
-
 Add installation instructions.
 
 **Full Changelog**: https://github.com/tox-dev/pre-commit-uv/compare/4.0.1...4.0.2
 
 ## 4.0.1 (2024-08-07)
-
-<!-- Release notes generated using configuration in .github/release.yml at main -->
 
 ### What's Changed
 
@@ -171,8 +145,6 @@ Add installation instructions.
 **Full Changelog**: https://github.com/tox-dev/pre-commit-uv/compare/4.0.0...4.0.1
 
 ## 4.0.0 (2024-08-05)
-
-<!-- Release notes generated using configuration in .github/release.yml at main -->
 
 - First version (using `4.0.0` as version to not break previous fork release of `3.8`).
 
