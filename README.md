@@ -9,6 +9,8 @@
 
 Use `uv` to create virtual environments and install packages for `pre-commit`.
 
+[Changelog](CHANGELOG.md)
+
 ## Installation
 
 With pipx:

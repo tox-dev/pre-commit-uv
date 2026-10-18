@@ -38,7 +38,7 @@ dependencies = [
 ]
 urls."Bug Tracker" = "https://github.com/tox-dev/pre-commit-uv/issues"
 urls."Source Code" = "https://github.com/tox-dev/pre-commit-uv"
-urls.Changelog = "https://github.com/tox-dev/pre-commit-uv/releases"
+urls.Changelog = "https://github.com/tox-dev/pre-commit-uv/blob/main/CHANGELOG.md"
 urls.Documentation = "https://github.com/tox-dev/pre-commit-uv/"
 
 [dependency-groups]
@@ -149,3 +149,14 @@ paths.source = [
 report.fail_under = 63
 html.show_contexts = true
 html.skip_covered = false
+
+[tool.towncrier]
+name = "pre-commit-uv"
+directory = "changelog.d"
+filename = "CHANGELOG.md"
+title_format = "## {version} ({project_date})"
+type = [
+  { directory = "feature", name = "Features", showcontent = true },
+  { directory = "bugfix", name = "Bug fixes", showcontent = true },
+  { directory = "doc", name = "Documentation", showcontent = true },
+]
