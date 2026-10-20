@@ -2,12 +2,20 @@ name: Prepare release
 on:
   workflow_dispatch:
     inputs:
-      version:
-        description: Version to release, without a v prefix
+      bump:
+        description: Version bump strategy
         required: true
+        type: choice
+        options:
+          - auto
+          - major
+          - minor
+          - patch
+          - calver
+        default: auto
 permissions: {}
 concurrency:
-  group: prepare-release
+  group: prepare-release-v2
   cancel-in-progress: false
 jobs:
   assemble:
@@ -15,6 +23,9 @@ jobs:
     runs-on: ubuntu-26.04
     permissions:
       contents: read
+      pull-requests: read
+    outputs:
+      version: ${{ steps.prepare.outputs.version }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -24,27 +35,20 @@ jobs:
         with:
           python-version: "3.15"
           enable-cache: false
-      - name: Build release patch
-        env:
-          VERSION: ${{ inputs.version }}
+      - name: Install locked release tools
         run: |
           set -euo pipefail
-          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "::error::expected a major.minor.patch version"
-            exit 1
-          fi
-          latest=$(git tag --list '[0-9]*' | sort -V | tail -n 1)
-          if [[ "$(printf '%s\n' "$latest" "$VERSION" | sort -V | tail -n 1)" != "$VERSION" || "$latest" == "$VERSION" ]]; then
-            echo "::error::$VERSION must be newer than $latest"
-            exit 1
-          fi
-          if ! compgen -G 'changelog.d/*.md' > /dev/null; then
-            echo "::error::no changelog fragments to release"
-            exit 1
-          fi
-          uvx towncrier build --yes --version "$VERSION"
-          git diff HEAD --binary > "$RUNNER_TEMP/release.patch"
-          test -s "$RUNNER_TEMP/release.patch"
+          uv venv --python 3.15 "$RUNNER_TEMP/release-tools"
+          uv pip sync --preview-features pylock --python "$RUNNER_TEMP/release-tools/bin/python" --group release pylock.toml
+          echo "$RUNNER_TEMP/release-tools/bin" >> "$GITHUB_PATH"
+      - id: prepare
+        uses: tox-dev/github-workflows/prepare-towncrier@84255555371c47578577079d168a4654fc749166
+        with:
+          bump: ${{ inputs.bump }}
+          changelog: CHANGELOG.md
+          fragments: changelog.d
+          format: markdown
+          patch: ${{ runner.temp }}/release.patch
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: release-patch
@@ -53,7 +57,9 @@ jobs:
   push:
     needs: assemble
     runs-on: ubuntu-26.04
-    environment: release-auth
+    environment:
+      name: release-auth
+      deployment: false
     permissions:
       contents: read
     steps:
@@ -65,23 +71,23 @@ jobs:
         with:
           name: release-patch
           path: ${{ runner.temp }}/release-patch
-      - name: Validate release patch
-        env:
-          VERSION: ${{ inputs.version }}
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+        with:
+          python-version: "3.15"
+          enable-cache: false
+      - name: Install locked release tools
         run: |
           set -euo pipefail
-          git fetch origin main
-          git reset --hard origin/main
-          git apply --check "$RUNNER_TEMP/release-patch/release.patch"
-          git apply --index "$RUNNER_TEMP/release-patch/release.patch"
-          while IFS= read -r path; do
-            case "$path" in
-              CHANGELOG.md|changelog.d/*.md) ;;
-              *) echo "::error::unexpected release path: $path"; exit 1 ;;
-            esac
-          done < <(git diff --cached --name-only)
-          grep -Fq "## $VERSION (" CHANGELOG.md
-          git diff --cached --check
+          uv venv --python 3.15 "$RUNNER_TEMP/release-tools"
+          uv pip sync --preview-features pylock --python "$RUNNER_TEMP/release-tools/bin/python" --group release pylock.toml
+          echo "$RUNNER_TEMP/release-tools/bin" >> "$GITHUB_PATH"
+      - uses: tox-dev/github-workflows/validate-release-patch@84255555371c47578577079d168a4654fc749166
+        with:
+          version: ${{ needs.assemble.outputs.version }}
+          changelog: CHANGELOG.md
+          fragments: changelog.d
+          patch: ${{ runner.temp }}/release-patch/release.patch
+          expected-sha: ${{ github.sha }}
       - id: token
         uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
         with:
@@ -90,17 +96,9 @@ jobs:
           owner: ${{ github.repository_owner }}
           repositories: ${{ github.event.repository.name }}
           permission-contents: write
-      - name: Commit and tag the release
-        env:
-          VERSION: ${{ inputs.version }}
-          GH_TOKEN: ${{ steps.token.outputs.token }}
-          APP_SLUG: ${{ steps.token.outputs.app-slug }}
-        run: |
-          set -euo pipefail
-          app_user_id=$(gh api "/users/${APP_SLUG}[bot]" --jq .id)
-          git config user.name "${APP_SLUG}[bot]"
-          git config user.email "${app_user_id}+${APP_SLUG}[bot]@users.noreply.github.com"
-          git commit -m "chore: prepare $VERSION"
-          git tag "$VERSION"
-          gh auth setup-git --hostname github.com --force
-          git push --atomic origin HEAD:main "refs/tags/$VERSION"
+      - uses: tox-dev/github-workflows/commit-and-tag@84255555371c47578577079d168a4654fc749166
+        with:
+          version: ${{ needs.assemble.outputs.version }}
+          token: ${{ steps.token.outputs.token }}
+          app-slug: ${{ steps.token.outputs.app-slug }}
+          message: release ${{ needs.assemble.outputs.version }}

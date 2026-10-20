@@ -1,0 +1,20 @@
+name: Upgrade release tools
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 8 * * 2"
+permissions: {}
+concurrency:
+  group: upgrade-release-tools
+  cancel-in-progress: false
+jobs:
+  upgrade:
+    uses: tox-dev/github-workflows/.github/workflows/upgrade-release-tools.yaml@84255555371c47578577079d168a4654fc749166
+    permissions:
+      actions: write
+      contents: write
+      pull-requests: write
+    with:
+      groups: release
+      python-version: "3.15"
+      check-workflow: check.yaml

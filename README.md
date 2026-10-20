@@ -11,6 +11,12 @@ Use `uv` to create virtual environments and install packages for `pre-commit`.
 
 [Changelog](CHANGELOG.md)
 
+User-facing pull requests need a `changelog.d/+short-name.<category>.md` fragment. The release workflow replaces the
+name with the squash-merged pull request number and credits its human authors. Use `skip news` for maintenance changes;
+bot updates need a fragment only when the pull request supplies one. Choose `feature` for Python support and new
+capabilities, `change` for changed behavior, `bugfix` for fixes, and `doc` for user documentation. Other categories are
+`security`, `performance`, `deprecation`, `removal`, and `packaging`.
+
 ## Installation
 
 With pipx:

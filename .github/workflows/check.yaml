@@ -56,8 +56,8 @@ jobs:
           PYTEST_ADDOPTS: "-vv --durations=5"
 
   changelog:
-    if: github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'skip news')
-    runs-on: ubuntu-26.04
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -67,21 +67,70 @@ jobs:
         with:
           python-version: "3.15"
           enable-cache: false
-      - run: uvx towncrier check --compare-with "origin/${GITHUB_BASE_REF}"
-
+      - name: Install locked release tools
+        run: |
+          set -euo pipefail
+          uv venv --python 3.15 "$RUNNER_TEMP/release-tools"
+          uv pip sync --preview-features pylock --python "$RUNNER_TEMP/release-tools/bin/python" --group release pylock.toml
+          echo "$RUNNER_TEMP/release-tools/bin" >> "$GITHUB_PATH"
+      - uses: tox-dev/github-workflows/validate-news@84255555371c47578577079d168a4654fc749166
+  release-dry-run:
+    name: Release without publishing
+    if: github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/main')
+    uses: tox-dev/github-workflows/.github/workflows/validate-python-release.yaml@84255555371c47578577079d168a4654fc749166
+    permissions:
+      contents: read
+      pull-requests: read
+    with:
+      changelog: CHANGELOG.md
+      fragments: changelog.d
+      format: markdown
+      artifact-base-url: https://pypi.org/project/pre-commit-uv/
+  release-tools-preview:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-26.04
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+        with:
+          python-version: "3.15"
+          enable-cache: false
+      - id: lock
+        uses: tox-dev/github-workflows/refresh-release-lock@84255555371c47578577079d168a4654fc749166
+        with:
+          groups: release
+          python-version: "3.15"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: steps.lock.outputs.changed == 'true'
+        with:
+          name: release-tools-lock-preview
+          path: ${{ runner.temp }}/lock.patch
+          if-no-files-found: error
+          retention-days: 1
   gate:
     name: Required checks pass
     if: always()
-    needs: [test, changelog]
-    runs-on: ubuntu-26.04
+    needs: [test, changelog, release-dry-run, release-tools-preview]
+    runs-on: ubuntu-24.04
     steps:
       - env:
           NEEDS_JSON: ${{ toJSON(needs) }}
+          EVENT_NAME: ${{ github.event_name }}
+          REF: ${{ github.ref }}
         run: |
-          jq -e '
+          jq -e --arg event "$EVENT_NAME" --arg ref "$REF" '
             all(
               to_entries[];
               .value.result == "success" or
-              (.key == "changelog" and .value.result == "skipped")
+              (.value.result == "skipped" and
+                ((.key == "changelog" and $event != "pull_request") or
+                (.key == "release-tools-preview" and $event != "pull_request") or
+                 (.key == "release-dry-run" and $event != "pull_request" and
+                    ($event != "workflow_dispatch" or $ref == "refs/heads/main"))))
             )
           ' <<< "$NEEDS_JSON"

@@ -66,6 +66,11 @@ pkg-meta = [
   "twine>=7",
   "uv>=0.12.22",
 ]
+release = [
+  "prek>=0.5",
+  "release-creator @ git+https://github.com/tox-dev/release-creator@b710d0913a8da770551efaf93c763432c01bec3d",
+  "towncrier>=26.9",
+]
 
 [tool.hatch]
 version.source = "vcs"
@@ -154,9 +159,17 @@ html.skip_covered = false
 name = "pre-commit-uv"
 directory = "changelog.d"
 filename = "CHANGELOG.md"
-title_format = "## {version} ({project_date})"
+template = "release_creator.fragments:template.jinja2"
+title_format = false
 type = [
-  { directory = "feature", name = "Features", showcontent = true },
-  { directory = "bugfix", name = "Bug fixes", showcontent = true },
+  { directory = "feature", name = "Added", showcontent = true },
+  { directory = "change", name = "Changes", showcontent = true },
+  { directory = "bugfix", name = "Fixed", showcontent = true },
   { directory = "doc", name = "Documentation", showcontent = true },
+  { directory = "breaking", name = "Breaking changes", showcontent = true },
+  { directory = "security", name = "Security", showcontent = true },
+  { directory = "performance", name = "Performance", showcontent = true },
+  { directory = "deprecation", name = "Deprecated", showcontent = true },
+  { directory = "removal", name = "Removed", showcontent = true },
+  { directory = "packaging", name = "Packaging", showcontent = true },
 ]
