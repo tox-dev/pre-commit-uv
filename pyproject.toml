@@ -8,18 +8,21 @@ requires = [
 
 [project]
 name = "pre-commit-uv"
+import-names = [ "pre_commit_uv" ]
 description = "Run pre-commit with uv"
 keywords = [
-  "format",
-  "pyproject",
+  "hooks",
+  "pre-commit",
+  "uv",
 ]
-license.file = "LICENSE.txt"
+license = "MIT"
+license-files = [ "LICENSE.txt" ]
 authors = [
   { name = "Bernat Gabor", email = "gaborjbernat@gmail.com" },
 ]
 requires-python = ">=3.11"
 classifiers = [
-  "License :: OSI Approved :: MIT License",
+  "Intended Audience :: Developers",
   "Operating System :: OS Independent",
   "Programming Language :: Python",
   "Programming Language :: Python :: 3 :: Only",
@@ -28,6 +31,7 @@ classifiers = [
   "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: 3.14",
   "Programming Language :: Python :: 3.15",
+  "Topic :: Software Development :: Version Control :: Git",
 ]
 dynamic = [
   "readme",
