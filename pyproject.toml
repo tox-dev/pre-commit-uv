@@ -85,6 +85,9 @@ build.targets.sdist.include = [
 build.targets.wheel.only-include = [ "src" ]
 build.targets.wheel.sources = [ "src" ]
 
+[tool.uv]
+dependency-groups.release = { requires-python = ">=3.15" }
+
 [tool.ruff]
 line-length = 120
 format.preview = true
