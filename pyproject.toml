@@ -84,7 +84,7 @@ metadata.hooks.fancy-pypi-readme.fragments = [ { path = "README.md" } ]
 metadata.hooks.fancy-pypi-readme.substitutions = [
   { pattern = '''(?x)
     (?<!!)\[(?P<label>[^\]]+)\]\( # Link text, excluding images
-    (?P<path>CHANGELOG\.md) # Repository files linked from the README
+    (?P<path>(?:CHANGELOG|CONTRIBUTING)\.md) # Repository files linked from the README
     \)
     ''', replacement = '[\g<label>](https://github.com/tox-dev/pre-commit-uv/blob/main/\g<path>)' },
 ]
