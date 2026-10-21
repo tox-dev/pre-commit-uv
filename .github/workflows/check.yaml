@@ -8,14 +8,11 @@ on:
     types: [opened, synchronize, reopened, labeled, unlabeled]
   schedule:
     - cron: "0 8 * * *"
-
 concurrency:
   group: check-${{ github.ref }}
   cancel-in-progress: true
-
 permissions:
   contents: read
-
 jobs:
   test:
     runs-on: ubuntu-26.04
@@ -54,7 +51,6 @@ jobs:
         run: tox run --skip-pkg-install -e ${{ matrix.env }}
         env:
           PYTEST_ADDOPTS: "-vv --durations=5"
-
   changelog:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-24.04
@@ -73,7 +69,7 @@ jobs:
           uv venv --python 3.15 "$RUNNER_TEMP/release-tools"
           uv pip sync --preview-features pylock --python "$RUNNER_TEMP/release-tools/bin/python" --group release pylock.toml
           echo "$RUNNER_TEMP/release-tools/bin" >> "$GITHUB_PATH"
-      - uses: tox-dev/github-workflows/validate-news@144f8e68b7d4c7c44e32258b1305e4402bc4e392
+      - uses: tox-dev/github-workflows/validate-news@5e11f2254a4dcb7102747d312ad7db48a2e9b0cb
   gate:
     name: Required checks pass
     if: always()
