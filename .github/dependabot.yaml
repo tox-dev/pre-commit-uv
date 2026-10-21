@@ -15,3 +15,15 @@ updates:
       github-actions:
         patterns:
           - "*"
+  - package-ecosystem: "pre-commit"
+    directory: "/"
+    allow:
+      - dependency-name: mdformat-gfm
+    labels:
+      - dependencies
+      - skip news
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+    cooldown:
+      default-days: 7
