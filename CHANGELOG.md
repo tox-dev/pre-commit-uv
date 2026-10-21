@@ -10,8 +10,10 @@
 
 ### Added
 
-- Require Python 3.11 or newer and use Python 3.15 by default
-  ([#183](https://github.com/tox-dev/pre-commit-uv/pull/183)) by [@gaborbernat](https://github.com/gaborbernat).
+- Require Python 3.11 or newer ([#183](https://github.com/tox-dev/pre-commit-uv/pull/183)) by
+  [@gaborbernat](https://github.com/gaborbernat).
+- Use Python 3.15 by default ([#183](https://github.com/tox-dev/pre-commit-uv/pull/183)) by
+  [@gaborbernat](https://github.com/gaborbernat).
 
 <a name="release-4-3-0"></a>
 
