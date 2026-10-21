@@ -6,7 +6,7 @@ Use tox for the Python test matrix and package checks:
 
 ```bash
 tox run -e 3.15,type,pkg_meta
-prek run --all-files
+tox run -e fix
 ```
 
 The `pkg_meta` environment builds an sdist and wheel, then runs Twine and check-wheel-contents on them. The pull request
