@@ -2,150 +2,173 @@
 
 <!-- towncrier release notes start -->
 
+<a name="release-4-4-0"></a>
+
 ## 4.4.0 (2026-10-10)
 
-### What's Changed
+<a name="release-4-4-0-added"></a>
 
-- 🔧 chore: batch dependency updates weekly on Tuesday by @gaborbernat in
-  https://github.com/tox-dev/pre-commit-uv/pull/172
-- 👷 ci: pin ubuntu-26.04 and bump dependencies by @gaborbernat in https://github.com/tox-dev/pre-commit-uv/pull/181
-- feat(python): require 3.11 and default to 3.15 by @gaborbernat in https://github.com/tox-dev/pre-commit-uv/pull/183
+### Added
 
-**Full Changelog**: https://github.com/tox-dev/pre-commit-uv/compare/4.3.0...4.4.0
+- Require Python 3.11 or newer ([#183](https://github.com/tox-dev/pre-commit-uv/pull/183)) by
+  [@gaborbernat](https://github.com/gaborbernat).
+- Use Python 3.15 by default ([#183](https://github.com/tox-dev/pre-commit-uv/pull/183)) by
+  [@gaborbernat](https://github.com/gaborbernat).
+
+<a name="release-4-3-0"></a>
 
 ## 4.3.0 (2026-07-20)
 
-No user-facing changes. This tag includes Python 3.15 CI coverage and dependency updates.
+<a name="release-4-3-0-added"></a>
+
+### Added
+
+- Support Python 3.15 ([#164](https://github.com/tox-dev/pre-commit-uv/pull/164)) by
+  [@gaborbernat](https://github.com/gaborbernat).
+
+<a name="release-4-2-2"></a>
 
 ## 4.2.2 (2026-06-19)
 
-### What's Changed
+<a name="release-4-2-2-fixed"></a>
 
-- 🔧 chore(tox): migrate tox.ini to tox.toml by @gaborbernat in https://github.com/tox-dev/pre-commit-uv/pull/116
-- Migrate type checking from mypy to ty by @gaborbernat in https://github.com/tox-dev/pre-commit-uv/pull/117
-- Move from extras to dependency-groups by @gaborbernat in https://github.com/tox-dev/pre-commit-uv/pull/118
-- Align dependency versions across projects by @gaborbernat in https://github.com/tox-dev/pre-commit-uv/pull/120
-- Add permissions to workflows by @gaborbernat in https://github.com/tox-dev/pre-commit-uv/pull/121
-- Move SECURITY.md to .github/SECURITY.md by @gaborbernat in https://github.com/tox-dev/pre-commit-uv/pull/122
-- Add missing .github config files by @gaborbernat in https://github.com/tox-dev/pre-commit-uv/pull/123
-- Standardize .github files to .yaml suffix by @gaborbernat in https://github.com/tox-dev/pre-commit-uv/pull/126
-- 🔒 ci(workflows): add zizmor security auditing by @gaborbernat in https://github.com/tox-dev/pre-commit-uv/pull/131
-- Drop redundant int cast in \_new_main by @gaborbernat in https://github.com/tox-dev/pre-commit-uv/pull/148
-- Tolerate uv truncated pyvenv.cfg version_info by @gaborbernat in https://github.com/tox-dev/pre-commit-uv/pull/153
+### Fixed
 
-**Full Changelog**: https://github.com/tox-dev/pre-commit-uv/compare/4.2.1...4.2.2
+- Handle truncated `version_info` values in uv's `pyvenv.cfg`
+  ([#153](https://github.com/tox-dev/pre-commit-uv/pull/153)) by [@gaborbernat](https://github.com/gaborbernat).
+
+<a name="release-4-2-1"></a>
 
 ## 4.2.1 (2026-02-18)
 
-### What's Changed
+<a name="release-4-2-1-fixed"></a>
 
-- 🐛 fix(venv): seed pip into hook environments by @gaborbernat in https://github.com/tox-dev/pre-commit-uv/pull/114
-- 🐛 fix(patch): detect python -m pre_commit by @gaborbernat in https://github.com/tox-dev/pre-commit-uv/pull/115
+### Fixed
 
-**Full Changelog**: https://github.com/tox-dev/pre-commit-uv/compare/4.2.0...4.2.1
+- Seed pip into hook environments ([#114](https://github.com/tox-dev/pre-commit-uv/pull/114)) by
+  [@gaborbernat](https://github.com/gaborbernat).
+- Detect calls through `python -m pre_commit` ([#115](https://github.com/tox-dev/pre-commit-uv/pull/115)) by
+  [@gaborbernat](https://github.com/gaborbernat).
+
+<a name="release-4-2-0"></a>
 
 ## 4.2.0 (2025-10-09)
 
-### What's Changed
+<a name="release-4-2-0-added"></a>
 
-- fix: add support for python 3.14 by @ssbarnea in https://github.com/tox-dev/pre-commit-uv/pull/86
-- Drop 3.9 support by @gaborbernat in https://github.com/tox-dev/pre-commit-uv/pull/91
+### Added
 
-### New Contributors
+- Support Python 3.14 ([#86](https://github.com/tox-dev/pre-commit-uv/pull/86)) by
+  [@ssbarnea](https://github.com/ssbarnea).
+- End Python 3.9 support ([#91](https://github.com/tox-dev/pre-commit-uv/pull/91)) by
+  [@gaborbernat](https://github.com/gaborbernat).
 
-- @ssbarnea made their first contribution in https://github.com/tox-dev/pre-commit-uv/pull/86
-
-**Full Changelog**: https://github.com/tox-dev/pre-commit-uv/compare/4.1.5...4.2.0
+<a name="release-4-1-5"></a>
 
 ## 4.1.5 (2025-08-27)
 
-### What's Changed
+<a name="release-4-1-5-changes"></a>
 
-- Use current project config for uv by @aaravind100 in https://github.com/tox-dev/pre-commit-uv/pull/79
+### Changes
 
-### New Contributors
+- Use the current project's uv configuration ([#79](https://github.com/tox-dev/pre-commit-uv/pull/79)) by
+  [@aaravind100](https://github.com/aaravind100).
 
-- @aaravind100 made their first contribution in https://github.com/tox-dev/pre-commit-uv/pull/79
-
-**Full Changelog**: https://github.com/tox-dev/pre-commit-uv/compare/4.1.4...4.1.5
+<a name="release-4-1-4"></a>
 
 ## 4.1.4 (2024-10-29)
 
-### What's Changed
+<a name="release-4-1-4-fixed"></a>
 
-- Respect UV_PYTHON and fallback to sys.executable by @gaborbernat in https://github.com/tox-dev/pre-commit-uv/pull/29
+### Fixed
 
-**Full Changelog**: https://github.com/tox-dev/pre-commit-uv/compare/4.1.3...4.1.4
+- Respect `UV_PYTHON` and fall back to `sys.executable` ([#29](https://github.com/tox-dev/pre-commit-uv/pull/29)) by
+  [@gaborbernat](https://github.com/gaborbernat).
+
+<a name="release-4-1-3"></a>
 
 ## 4.1.3 (2024-09-23)
 
-### What's Changed
+<a name="release-4-1-3-fixed"></a>
 
-- Patch pre-commit also when called due to a git commit by @florianfischer91 in
-  https://github.com/tox-dev/pre-commit-uv/pull/18
+### Fixed
 
-### New Contributors
+- Patch pre-commit when invoked by `git commit` ([#18](https://github.com/tox-dev/pre-commit-uv/pull/18)) by
+  [@florianfischer91](https://github.com/florianfischer91).
 
-- @florianfischer91 made their first contribution in https://github.com/tox-dev/pre-commit-uv/pull/18
-
-**Full Changelog**: https://github.com/tox-dev/pre-commit-uv/compare/4.1.2...4.1.3
+<a name="release-4-1-2"></a>
 
 ## 4.1.2 (2024-09-18)
 
-### What's Changed
-
-- Improve the CI by @gaborbernat in https://github.com/tox-dev/pre-commit-uv/pull/16
-
-**Full Changelog**: https://github.com/tox-dev/pre-commit-uv/compare/4.1.1...4.1.2
+<a name="release-4-1-1"></a>
 
 ## 4.1.1 (2024-09-08)
 
-### What's Changed
+<a name="release-4-1-1-added"></a>
 
-- Declare 3.13 support by @gaborbernat in https://github.com/tox-dev/pre-commit-uv/pull/12
+### Added
 
-### New Contributors
+- Support Python 3.13 ([#12](https://github.com/tox-dev/pre-commit-uv/pull/12)) by
+  [@gaborbernat](https://github.com/gaborbernat).
 
-- @dependabot made their first contribution in https://github.com/tox-dev/pre-commit-uv/pull/10
-
-**Full Changelog**: https://github.com/tox-dev/pre-commit-uv/compare/4.1.0...4.1.1
+<a name="release-4-1-0"></a>
 
 ## 4.1.0 (2024-08-12)
 
-### What's Changed
+<a name="release-4-1-0-changes"></a>
 
-- Specify pre-commit-uv and uv version in --version by @gaborbernat in https://github.com/tox-dev/pre-commit-uv/pull/7
+### Changes
 
-### New Contributors
+- Show pre-commit-uv and uv versions in `--version` output ([#7](https://github.com/tox-dev/pre-commit-uv/pull/7)) by
+  [@gaborbernat](https://github.com/gaborbernat).
 
-- @pre-commit-ci made their first contribution in https://github.com/tox-dev/pre-commit-uv/pull/6
-
-**Full Changelog**: https://github.com/tox-dev/pre-commit-uv/compare/4.0.3...4.1.0
+<a name="release-4-0-3"></a>
 
 ## 4.0.3 (2024-08-08)
 
-### What's Changed
+<a name="release-4-0-3-fixed"></a>
 
-- Ensure uv knows caller Python by @gaborbernat in https://github.com/tox-dev/pre-commit-uv/pull/5
+### Fixed
 
-**Full Changelog**: https://github.com/tox-dev/pre-commit-uv/compare/4.0.2...4.0.3
+- Pass the caller's Python to uv ([#5](https://github.com/tox-dev/pre-commit-uv/pull/5)) by
+  [@gaborbernat](https://github.com/gaborbernat).
+
+<a name="release-4-0-2"></a>
 
 ## 4.0.2 (2024-08-07)
 
-Add installation instructions.
+<a name="release-4-0-2-documentation"></a>
 
-**Full Changelog**: https://github.com/tox-dev/pre-commit-uv/compare/4.0.1...4.0.2
+### Documentation
+
+- Add installation instructions ([commit](https://github.com/tox-dev/pre-commit-uv/commit/fdb8619)) by
+  [@gaborbernat](https://github.com/gaborbernat).
+
+<a name="release-4-0-1"></a>
 
 ## 4.0.1 (2024-08-07)
 
-### What's Changed
+<a name="release-4-0-1-performance"></a>
 
-- Avoid patching import overheads and extend README by @gaborbernat in https://github.com/tox-dev/pre-commit-uv/pull/2
+### Performance
 
-**Full Changelog**: https://github.com/tox-dev/pre-commit-uv/compare/4.0.0...4.0.1
+- Avoid patching import overhead ([#2](https://github.com/tox-dev/pre-commit-uv/pull/2)) by
+  [@gaborbernat](https://github.com/gaborbernat).
+
+<a name="release-4-0-1-documentation"></a>
+
+### Documentation
+
+- Extend the README ([#2](https://github.com/tox-dev/pre-commit-uv/pull/2)) by
+  [@gaborbernat](https://github.com/gaborbernat).
+
+<a name="release-4-0-0"></a>
 
 ## 4.0.0 (2024-08-05)
 
-- First version (using `4.0.0` as version to not break previous fork release of `3.8`).
+<a name="release-4-0-0-added"></a>
 
-**Full Changelog**: https://github.com/tox-dev/pre-commit-uv/commits/4.0.0
+### Added
+
+- Publish the first pre-commit-uv release ([#1](https://github.com/tox-dev/pre-commit-uv/pull/1)) by
+  [@gaborbernat](https://github.com/gaborbernat).
