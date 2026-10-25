@@ -41,7 +41,6 @@ default_base_python = [ "3.15" ]
 
 [env.fix]
 description = "format the code base to adhere to our styles, and complain about what we cannot do automatically"
-skip_install = true
 dependency_groups = [ "lint" ]
 commands = [ [ "pre-commit", "run", "--all-files", "--show-diff-on-failure" ] ]
 
