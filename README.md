@@ -11,6 +11,8 @@ Use `uv` to create virtual environments and install packages for `pre-commit`.
 
 [Changelog](CHANGELOG.md)
 
+[Contributing](CONTRIBUTING.md)
+
 ## Installation
 
 With pipx:
@@ -28,10 +30,8 @@ uv tool install pre-commit --with pre-commit-uv --force-reinstall
 
 ## Why?
 
-Compared to upstream `pre-commit` will speed up the initial seed operation. In general, upstream recommends caching the
-`pre-commit` cache, however, that is not always possible and is still helpful to have a more performant initial cache
-creation., Here's an example of what you could expect demonstrated on this project's own pre-commit setup (with a hot
-`uv` cache):
+`pre-commit-uv` uses uv to create and seed hook environments. Caching the pre-commit directory avoids this work on later
+runs, but the first install still needs it. This benchmark used this project's hooks with a warm uv cache:
 
 ```shell
 ❯ hyperfine  'pre-commit install-hooks' 'pre-commit-uv install-hooks'
@@ -49,10 +49,9 @@ Summary
 
 ## Configuration
 
-Once installed will use `uv` out of box, however the `DISABLE_PRE_COMMIT_UV_PATCH` environment variable if is set it
-will work as an escape hatch to disable the new behavior.
+Once installed, `pre-commit-uv` uses uv by default. Set `DISABLE_PRE_COMMIT_UV_PATCH` to use pre-commit's normal
+installation path instead.
 
-To avoid interpreter startup overhead of the patching, we only perform this when we detect you calling `pre-commit`.
-Should this logic fail you can force the patching by setting the `FORCE_PRE_COMMIT_UV_PATCH` variable. Should you
-experience this please raise an issue with the content of the `sys.argv`. Note that `DISABLE_PRE_COMMIT_UV_PATCH` will
-overwrite this flag should both be set.
+The patch loads when the process appears to be running pre-commit. If detection misses a call, set
+`FORCE_PRE_COMMIT_UV_PATCH` and report the value of `sys.argv` in an issue. `DISABLE_PRE_COMMIT_UV_PATCH` takes
+precedence when both variables are set.
