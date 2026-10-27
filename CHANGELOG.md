@@ -2,6 +2,17 @@
 
 <!-- towncrier release notes start -->
 
+<a name="release-4-4-1"></a>
+
+## 4.4.1 (2026-10-27)
+
+<a name="release-4-4-1-fixed"></a>
+
+### Fixed
+
+- Fix repository links in the PyPI project description ([#190](https://github.com/tox-dev/pre-commit-uv/pull/190)) by
+  [@gaborbernat](https://github.com/gaborbernat).
+
 <a name="release-4-4-0"></a>
 
 ## 4.4.0 (2026-10-10)
