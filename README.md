@@ -6,6 +6,8 @@
 [![Downloads](https://static.pepy.tech/badge/pre-commit-uv/month)](https://pepy.tech/project/pre-commit-uv)
 [![PyPI - License](https://img.shields.io/pypi/l/pre-commit-uv?style=flat-square)](https://opensource.org/licenses/MIT)
 [![check](https://github.com/tox-dev/pre-commit-uv/actions/workflows/check.yaml/badge.svg)](https://github.com/tox-dev/pre-commit-uv/actions/workflows/check.yaml)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/tox-dev/pre-commit-uv/badge)](https://scorecard.dev/viewer/?uri=github.com/tox-dev/pre-commit-uv)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/16254/badge)](https://www.bestpractices.dev/projects/16254)
 
 Use `uv` to create virtual environments and install packages for `pre-commit`.
 
