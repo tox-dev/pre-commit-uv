@@ -38,3 +38,7 @@ version for a `feature` fragment, and a patch version for other categories. The 
 `prek` on the result, and uses the repository-scoped App to push the release commit and tag. The tag workflow builds the
 distribution, publishes it to PyPI through trusted publishing, then creates the GitHub Release from the tagged
 changelog. The workflow does not ask for a version string.
+
+## Tests
+
+Add a test for every new feature and bug fix. A change without a test needs a reason in the pull request description.
