@@ -9,6 +9,8 @@ from typing import TYPE_CHECKING, Final
 import pytest
 from pre_commit import main
 
+from pre_commit_uv._pre_commit_patch import _patch
+
 if TYPE_CHECKING:
     from pathlib import Path
 
@@ -55,8 +57,6 @@ def test_call_as_module() -> None:
 def test_install(git_repo: Path, caplog: pytest.LogCaptureFixture, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("FORCE_PRE_COMMIT_UV_PATCH", "1")
 
-    from pre_commit_uv._pre_commit_patch import _patch  # ruff:ignore[import-outside-top-level]
-
     _patch()
     main.main(["install-hooks", "-c", str(git_repo / _PRECOMMIT_FILE)])
 
@@ -71,8 +71,6 @@ def test_install(git_repo: Path, caplog: pytest.LogCaptureFixture, monkeypatch: 
 
 def test_install_seeds_pip(git_repo: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("FORCE_PRE_COMMIT_UV_PATCH", "1")
-
-    from pre_commit_uv._pre_commit_patch import _patch  # ruff:ignore[import-outside-top-level]
 
     _patch()
     main.main(["install-hooks", "-c", str(git_repo / _PRECOMMIT_FILE)])
@@ -120,8 +118,6 @@ def test_install_with_uv_config(
 
     monkeypatch.setenv("FORCE_PRE_COMMIT_UV_PATCH", "1")
 
-    from pre_commit_uv._pre_commit_patch import _patch  # ruff:ignore[import-outside-top-level]
-
     _patch()
     main.main(["install-hooks", "-c", str(git_repo / _PRECOMMIT_FILE)])
 
@@ -167,8 +163,6 @@ def test_install_with_uv_config_raises_error(
     (git_repo / file_name).write_text(dedent(content))
 
     monkeypatch.setenv("FORCE_PRE_COMMIT_UV_PATCH", "1")
-
-    from pre_commit_uv._pre_commit_patch import _patch  # ruff:ignore[import-outside-top-level]
 
     _patch()
 
