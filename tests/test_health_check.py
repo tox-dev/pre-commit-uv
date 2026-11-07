@@ -47,7 +47,6 @@ def test_health_check_no_base_executable_passes(tmp_path: Path) -> None:
 
 
 def test_health_check_version_mismatch_fails(tmp_path: Path) -> None:
-
     result = _health_check(_make_env(tmp_path, f"version_info = {_WRONG_VERSION}\n"), _VERSION)
 
     assert result is not None

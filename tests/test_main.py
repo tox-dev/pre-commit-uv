@@ -15,8 +15,8 @@ if TYPE_CHECKING:
     from pathlib import Path
 
 _PRECOMMIT_FILE: Final[str] = ".pre-commit-config.yaml"
-_UV: Final[str] = version("uv")
-_SELF: Final[str] = version("pre-commit-uv")
+_UV_VERSION: Final[str] = version("uv")
+_PRE_COMMIT_UV_VERSION: Final[str] = version("pre-commit-uv")
 
 
 @pytest.fixture
@@ -45,13 +45,19 @@ def install_hook(git_repo: Path) -> None:
 @pytest.mark.usefixtures("install_hook")
 def test_run_precommit_hook() -> None:
     hook_result = check_output([".git/hooks/pre-commit"], encoding="utf-8")
-    assert f"[INFO] Using pre-commit with uv {_UV} via pre-commit-uv {_SELF}" in hook_result.splitlines()
+    assert (
+        f"[INFO] Using pre-commit with uv {_UV_VERSION} via pre-commit-uv {_PRE_COMMIT_UV_VERSION}"
+        in hook_result.splitlines()
+    )
 
 
 @pytest.mark.usefixtures("install_hook")
 def test_call_as_module() -> None:
     run_result = check_output([sys.executable, "-m", "pre_commit", "run", "-a", "--color", "never"], encoding="utf-8")
-    assert f"[INFO] Using pre-commit with uv {_UV} via pre-commit-uv {_SELF}" in run_result.splitlines()
+    assert (
+        f"[INFO] Using pre-commit with uv {_UV_VERSION} via pre-commit-uv {_PRE_COMMIT_UV_VERSION}"
+        in run_result.splitlines()
+    )
 
 
 def test_install(git_repo: Path, caplog: pytest.LogCaptureFixture, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -65,7 +71,7 @@ def test_install(git_repo: Path, caplog: pytest.LogCaptureFixture, monkeypatch: 
         "Installing environment for https://github.com/tox-dev/pyproject-fmt.",
         "Once installed this environment will be reused.",
         "This may take a few minutes...",
-        f"Using pre-commit with uv {_UV} via pre-commit-uv {_SELF}",
+        f"Using pre-commit with uv {_UV_VERSION} via pre-commit-uv {_PRE_COMMIT_UV_VERSION}",
     ]
 
 
@@ -126,7 +132,7 @@ def test_install_with_uv_config(
         "Installing environment for https://github.com/tox-dev/pyproject-fmt.",
         "Once installed this environment will be reused.",
         "This may take a few minutes...",
-        f"Using pre-commit with uv {_UV} via pre-commit-uv {_SELF}",
+        f"Using pre-commit with uv {_UV_VERSION} via pre-commit-uv {_PRE_COMMIT_UV_VERSION}",
     ]
 
 
