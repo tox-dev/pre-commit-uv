@@ -19,7 +19,29 @@ if TYPE_CHECKING:
         health_check: Callable[[Prefix, str], str | None]
 
 
-_original_main = None
+_ORIGINAL_MAIN = None
+
+
+def _patch() -> None:
+    global _ORIGINAL_MAIN
+    if _ORIGINAL_MAIN is not None:  # already patched, nothing more to do
+        return
+
+    if _is_calling_pre_commit() and os.environ.get("DISABLE_PRE_COMMIT_UV_PATCH") is None:
+        from pre_commit import main  # ruff:ignore[import-outside-top-level]
+
+        _ORIGINAL_MAIN, main.main = main.main, _new_main  # ty: ignore[invalid-assignment]
+        if "--version" in sys.argv:
+            from importlib.metadata import version as _metadata_version  # ruff:ignore[import-outside-top-level]
+
+            from pre_commit import constants  # ruff:ignore[import-outside-top-level]
+
+            constants.VERSION = (
+                f"{constants.VERSION} ("
+                f"pre-commit-uv={_metadata_version('pre-commit-uv')}, "
+                f"uv={_metadata_version('uv')}"
+                f")"
+            )
 
 
 def _is_calling_pre_commit() -> bool:
@@ -36,28 +58,6 @@ def _is_calling_pre_commit() -> bool:
         return True
     # case when pre-commit is called due to a git commit
     return "-m" in sys.argv and "hook-impl" in sys.argv
-
-
-def _patch() -> None:
-    global _original_main
-    if _original_main is not None:  # already patched, nothing more to do
-        return
-
-    if _is_calling_pre_commit() and os.environ.get("DISABLE_PRE_COMMIT_UV_PATCH") is None:
-        from pre_commit import main  # ruff:ignore[import-outside-top-level]
-
-        _original_main, main.main = main.main, _new_main  # ty: ignore[invalid-assignment]
-        if "--version" in sys.argv:
-            from importlib.metadata import version as _metadata_version  # ruff:ignore[import-outside-top-level]
-
-            from pre_commit import constants  # ruff:ignore[import-outside-top-level]
-
-            constants.VERSION = (
-                f"{constants.VERSION} ("
-                f"pre-commit-uv={_metadata_version('pre-commit-uv')}, "
-                f"uv={_metadata_version('uv')}"
-                f")"
-            )
 
 
 def _new_main(argv: Sequence[str] | None = None) -> int:
@@ -130,18 +130,8 @@ def _new_main(argv: Sequence[str] | None = None) -> int:
     patched = cast("_PatchablePython", python)
     patched.install_environment = _install_environment
     patched.health_check = _health_check
-    assert _original_main is not None  # ruff:ignore[assert]
-    return _original_main(argv)
-
-
-def _version_info(exe: str) -> str:
-    from pre_commit.util import CalledProcessError, cmd_output  # ruff:ignore[import-outside-top-level]
-
-    prog = 'import sys;print(".".join(str(p) for p in sys.version_info[0:3]))'
-    try:
-        return cmd_output(exe, "-S", "-c", prog)[1].strip()
-    except CalledProcessError:
-        return f"<<error retrieving version from {exe}>>"
+    assert _ORIGINAL_MAIN is not None  # ruff:ignore[assert]
+    return _ORIGINAL_MAIN(argv)
 
 
 def _health_check(prefix: Prefix, version: str) -> str | None:
@@ -160,8 +150,7 @@ def _health_check(prefix: Prefix, version: str) -> str | None:
         return "created virtualenv's pyvenv.cfg is missing `version_info`"
     expected = cfg["version_info"].split(".")
 
-    py_exe = prefix.path(python.bin_dir(str(pyvenv_cfg.parent)), win_exe("python"))
-    targets = [("virtualenv python", py_exe)]
+    targets = [("virtualenv python", prefix.path(python.bin_dir(str(pyvenv_cfg.parent)), win_exe("python")))]
     if "base-executable" in cfg:
         targets.append(("base executable", cfg["base-executable"]))
     for label, exe in targets:
@@ -172,3 +161,13 @@ def _health_check(prefix: Prefix, version: str) -> str | None:
                 f"- expected version: {cfg['version_info']}\n"
             )
     return None
+
+
+def _version_info(exe: str) -> str:
+    from pre_commit.util import CalledProcessError, cmd_output  # ruff:ignore[import-outside-top-level]
+
+    prog = 'import sys;print(".".join(str(p) for p in sys.version_info[0:3]))'
+    try:
+        return cmd_output(exe, "-S", "-c", prog)[1].strip()
+    except CalledProcessError:
+        return f"<<error retrieving version from {exe}>>"
