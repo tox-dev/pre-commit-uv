@@ -1,4 +1,4 @@
-"""For editable installs the pth file is not applied, so we have to manually add it."""  # ruff:ignore[implicit-namespace-package]
+"""For editable installs the pth file is not applied, so we have to manually add it."""  # ruff:ignore[implicit-namespace-package] task holds scripts run by path, not a package
 
 from __future__ import annotations
 

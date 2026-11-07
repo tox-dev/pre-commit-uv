@@ -28,13 +28,13 @@ def _patch() -> None:
         return
 
     if _is_calling_pre_commit() and os.environ.get("DISABLE_PRE_COMMIT_UV_PATCH") is None:
-        from pre_commit import main  # ruff:ignore[import-outside-top-level]
+        from pre_commit import main  # ruff:ignore[import-outside-top-level] loaded only when pre-commit runs, keeping startup cheap
 
-        _ORIGINAL_MAIN, main.main = main.main, _new_main  # ty: ignore[invalid-assignment]
+        _ORIGINAL_MAIN, main.main = main.main, _new_main  # ty: ignore[invalid-assignment] pre-commit exposes main as a plain function we patch on purpose
         if "--version" in sys.argv:
-            from importlib.metadata import version as _metadata_version  # ruff:ignore[import-outside-top-level]
+            from importlib.metadata import version as _metadata_version  # ruff:ignore[import-outside-top-level] loaded only when pre-commit runs, keeping startup cheap
 
-            from pre_commit import constants  # ruff:ignore[import-outside-top-level]
+            from pre_commit import constants  # ruff:ignore[import-outside-top-level] loaded only when pre-commit runs, keeping startup cheap
 
             constants.VERSION = (
                 f"{constants.VERSION} ("
@@ -62,20 +62,20 @@ def _is_calling_pre_commit() -> bool:
 
 def _new_main(argv: Sequence[str] | None = None) -> int:
     # imports applied locally to avoid patching import overhead cost
-    from functools import cache  # ruff:ignore[import-outside-top-level]
+    from functools import cache  # ruff:ignore[import-outside-top-level] loaded only when pre-commit runs, keeping startup cheap
 
-    from pre_commit.languages import python  # ruff:ignore[import-outside-top-level]
+    from pre_commit.languages import python  # ruff:ignore[import-outside-top-level] loaded only when pre-commit runs, keeping startup cheap
 
     def _install_environment(
         prefix: Prefix,
         version: str,
         additional_dependencies: Sequence[str],
     ) -> None:
-        import logging  # ruff:ignore[import-outside-top-level]
+        import logging  # ruff:ignore[import-outside-top-level] loaded only when pre-commit runs, keeping startup cheap
 
-        from pre_commit.git import get_root  # ruff:ignore[import-outside-top-level]
-        from pre_commit.lang_base import environment_dir, setup_cmd  # ruff:ignore[import-outside-top-level]
-        from pre_commit.util import cmd_output_b  # ruff:ignore[import-outside-top-level]
+        from pre_commit.git import get_root  # ruff:ignore[import-outside-top-level] loaded only when pre-commit runs, keeping startup cheap
+        from pre_commit.lang_base import environment_dir, setup_cmd  # ruff:ignore[import-outside-top-level] loaded only when pre-commit runs, keeping startup cheap
+        from pre_commit.util import cmd_output_b  # ruff:ignore[import-outside-top-level] loaded only when pre-commit runs, keeping startup cheap
 
         project_root_dir = get_root()
 
@@ -111,41 +111,41 @@ def _new_main(argv: Sequence[str] | None = None) -> int:
 
     @cache
     def _uv() -> str:
-        from uv import find_uv_bin  # ruff:ignore[import-outside-top-level]
+        from uv import find_uv_bin  # ruff:ignore[import-outside-top-level] loaded only when pre-commit runs, keeping startup cheap
 
         return find_uv_bin()
 
     @cache
     def self_version() -> str:
-        from importlib.metadata import version as _metadata_version  # ruff:ignore[import-outside-top-level]
+        from importlib.metadata import version as _metadata_version  # ruff:ignore[import-outside-top-level] loaded only when pre-commit runs, keeping startup cheap
 
         return _metadata_version("pre-commit-uv")
 
     @cache
     def uv_version() -> str:
-        from importlib.metadata import version as _metadata_version  # ruff:ignore[import-outside-top-level]
+        from importlib.metadata import version as _metadata_version  # ruff:ignore[import-outside-top-level] loaded only when pre-commit runs, keeping startup cheap
 
         return _metadata_version("uv")
 
     patched = cast("_PatchablePython", python)
     patched.install_environment = _install_environment
     patched.health_check = _health_check
-    assert _ORIGINAL_MAIN is not None  # ruff:ignore[assert]
+    assert _ORIGINAL_MAIN is not None  # ruff:ignore[assert] _patch sets _ORIGINAL_MAIN before installing _new_main
     return _ORIGINAL_MAIN(argv)
 
 
 def _health_check(prefix: Prefix, version: str) -> str | None:
     # uv may record fewer version components in pyvenv.cfg than pre-commit expects (e.g. "3.14" vs "3.14.6"),
     # so compare only the components uv actually wrote rather than requiring an exact string match
-    from pre_commit.lang_base import environment_dir  # ruff:ignore[import-outside-top-level]
-    from pre_commit.languages import python  # ruff:ignore[import-outside-top-level]
-    from pre_commit.util import win_exe  # ruff:ignore[import-outside-top-level]
+    from pre_commit.lang_base import environment_dir  # ruff:ignore[import-outside-top-level] loaded only when pre-commit runs, keeping startup cheap
+    from pre_commit.languages import python  # ruff:ignore[import-outside-top-level] loaded only when pre-commit runs, keeping startup cheap
+    from pre_commit.util import win_exe  # ruff:ignore[import-outside-top-level] loaded only when pre-commit runs, keeping startup cheap
 
     pyvenv_cfg = pathlib.Path(environment_dir(prefix, python.ENVIRONMENT_DIR, version)) / "pyvenv.cfg"
     if not pyvenv_cfg.exists():
         return "pyvenv.cfg does not exist (old virtualenv?)"
 
-    cfg = python._read_pyvenv_cfg(str(pyvenv_cfg))  # ruff:ignore[private-member-access]
+    cfg = python._read_pyvenv_cfg(str(pyvenv_cfg))  # ruff:ignore[private-member-access] pre-commit has no public pyvenv.cfg reader
     if "version_info" not in cfg:
         return "created virtualenv's pyvenv.cfg is missing `version_info`"
     expected = cfg["version_info"].split(".")
@@ -164,7 +164,7 @@ def _health_check(prefix: Prefix, version: str) -> str | None:
 
 
 def _version_info(exe: str) -> str:
-    from pre_commit.util import CalledProcessError, cmd_output  # ruff:ignore[import-outside-top-level]
+    from pre_commit.util import CalledProcessError, cmd_output  # ruff:ignore[import-outside-top-level] loaded only when pre-commit runs, keeping startup cheap
 
     prog = 'import sys;print(".".join(str(p) for p in sys.version_info[0:3]))'
     try:
