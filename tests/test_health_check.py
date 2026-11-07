@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Final
 from pre_commit.languages import python
 from pre_commit.prefix import Prefix
 
-from pre_commit_uv import _health_check
+from pre_commit_uv._pre_commit_patch import _health_check
 
 if TYPE_CHECKING:
     from pathlib import Path
