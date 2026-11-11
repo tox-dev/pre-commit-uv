@@ -133,32 +133,25 @@ lint.select = [
   "ALL",
 ]
 lint.ignore = [
-  "any-type",                                  # allow Any as type annotation
   "CPY",                                       # No copyright statements
-  "docstring-missing-exception",               # not working with Sphinx
-  "hardcoded-bind-all-interfaces",             # Possible binding to all interfaces
-  "incorrect-blank-line-before-class",         # `one-blank-line-before-class` (D203) and `no-blank-line-before-class` (D211) are incompatible
+  "incorrect-blank-line-before-class",         # Conflicts with `blank-line-before-class`
   "missing-trailing-comma",                    # Conflict with formatter
-  "multi-line-summary-first-line",             # `multi-line-summary-first-line` (D212) and `multi-line-summary-second-line` (D213) are incompatible
-  "non-empty-init-module",                     # `__init__` module should only contain docstrings and re-exports
+  "multi-line-summary-first-line",             # Conflicts with `multi-line-summary-second-line`
   "single-line-implicit-string-concatenation", # Conflict with formatter
-  "undocumented-magic-method",                 # undocumented-public-api (simplint SMP903) covers the public API instead
-  "undocumented-public-class",                 # undocumented-public-api (simplint SMP903) covers the public API instead
-  "undocumented-public-function",              # undocumented-public-api (simplint SMP903) covers the public API instead
-  "undocumented-public-init",                  # undocumented-public-api (simplint SMP903) covers the public API instead
-  "undocumented-public-method",                # undocumented-public-api (simplint SMP903) covers the public API instead
-  "undocumented-public-nested-class",          # undocumented-public-api (simplint SMP903) covers the public API instead
+  "undocumented-magic-method",                 # undocumented-public-api (simplint) covers the public API instead
+  "undocumented-public-class",                 # undocumented-public-api (simplint) covers the public API instead
+  "undocumented-public-function",              # undocumented-public-api (simplint) covers the public API instead
+  "undocumented-public-init",                  # undocumented-public-api (simplint) covers the public API instead
+  "undocumented-public-method",                # undocumented-public-api (simplint) covers the public API instead
+  "undocumented-public-nested-class",          # undocumented-public-api (simplint) covers the public API instead
 ]
 lint.per-file-ignores."tests/**/*.py" = [
-  "assert",                        # asserts allowed in tests...
-  "D",                             # don"t care about documentation in tests
-  "FBT",                           # don"t care about booleans as positional arguments in tests
-  "implicit-namespace-package",    # no implicit namespace
-  "import-private-name",           # private import
-  "magic-value-comparison",        # Magic value used in comparison, consider replacing with a constant variable
-  "S",                             # `subprocess` call: check for execution of untrusted input
-  "too-many-arguments",            # any number of arguments in tests
-  "too-many-positional-arguments", # any number of arguments in tests
+  "assert",                               # asserts allowed in tests...
+  "implicit-namespace-package",           # no implicit namespace
+  "import-private-name",                  # private import
+  "subprocess-without-shell-equals-true", # integration tests pass fixed commands and fixture paths to subprocesses
+  "suspicious-subprocess-import",         # integration tests execute pre-commit and its installed hook
+  "undocumented-public-module",           # tests do not need module docstrings
 ]
 lint.isort = { known-first-party = [
   "pre_commit_uv",
