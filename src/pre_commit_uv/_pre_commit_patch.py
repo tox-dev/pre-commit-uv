@@ -145,7 +145,11 @@ def _health_check(prefix: Prefix, version: str) -> str | None:
     if not pyvenv_cfg.exists():
         return "pyvenv.cfg does not exist (old virtualenv?)"
 
-    cfg = python._read_pyvenv_cfg(str(pyvenv_cfg))  # ruff:ignore[private-member-access] pre-commit has no public pyvenv.cfg reader
+    cfg = {}
+    for line in pyvenv_cfg.read_text(encoding="utf-8").splitlines():
+        key, separator, value = line.partition("=")
+        if separator and "=" not in value:
+            cfg[key.strip()] = value.strip()
     if "version_info" not in cfg:
         return "created virtualenv's pyvenv.cfg is missing `version_info`"
     expected = cfg["version_info"].split(".")
