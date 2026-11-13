@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import sys
+from importlib import reload
 from importlib.metadata import version
 from shutil import which
 from subprocess import check_call, check_output
@@ -12,7 +13,7 @@ from pre_commit import main
 from pre_commit.languages import python
 from pre_commit.prefix import Prefix
 
-from pre_commit_uv._pre_commit_patch import _health_check, _patch
+from pre_commit_uv._pre_commit_patch import patch
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -74,7 +75,9 @@ def test_call_as_module() -> None:
 def test_install(git_repo: Path, caplog: pytest.LogCaptureFixture, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("FORCE_PRE_COMMIT_UV_PATCH", "1")
 
-    _patch()
+    reload(main)
+    reload(sys.modules[patch.__module__])
+    patch()
     main.main(["install-hooks", "-c", str(git_repo / _PRECOMMIT_FILE)])
 
     assert caplog.messages == [
@@ -89,7 +92,7 @@ def test_install(git_repo: Path, caplog: pytest.LogCaptureFixture, monkeypatch: 
 def test_install_seeds_pip(git_repo: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("FORCE_PRE_COMMIT_UV_PATCH", "1")
 
-    _patch()
+    patch()
     main.main(["install-hooks", "-c", str(git_repo / _PRECOMMIT_FILE)])
 
     env_dirs = list((git_repo / "store").rglob("py_env-*"))
@@ -135,7 +138,7 @@ def test_install_with_uv_config(
 
     monkeypatch.setenv("FORCE_PRE_COMMIT_UV_PATCH", "1")
 
-    _patch()
+    patch()
     main.main(["install-hooks", "-c", str(git_repo / _PRECOMMIT_FILE)])
 
     assert caplog.messages == [
@@ -181,18 +184,28 @@ def test_install_with_uv_config_raises_error(
 
     monkeypatch.setenv("FORCE_PRE_COMMIT_UV_PATCH", "1")
 
-    _patch()
+    patch()
 
     # would raise SystemExit due to bad config
     with pytest.raises(SystemExit):
         main.main(["install-hooks", "-c", str(git_repo / _PRECOMMIT_FILE)])
 
 
+@pytest.fixture
+def patched_pre_commit(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("FORCE_PRE_COMMIT_UV_PATCH", "1")
+    patch()
+    with pytest.raises(SystemExit) as result:
+        main.main(["--version"])
+    assert result.value.code == 0
+
+
+@pytest.mark.usefixtures("patched_pre_commit")
 def test_health_check_truncated_version_passes(tmp_path: Path) -> None:
     # uv >=0.11.22 writes only the major.minor into pyvenv.cfg (see issue #152).
     prefix = _make_env(tmp_path, f"version_info = {_MAJOR_MINOR}\nbase-executable = {sys.executable}\n")
 
-    assert _health_check(prefix, _VERSION) is None
+    assert python.health_check(prefix, _VERSION) is None
 
 
 def _make_env(tmp_path: Path, pyvenv_cfg: str | None) -> Prefix:
@@ -205,39 +218,44 @@ def _make_env(tmp_path: Path, pyvenv_cfg: str | None) -> Prefix:
     return Prefix(str(tmp_path))
 
 
+@pytest.mark.usefixtures("patched_pre_commit")
 def test_health_check_full_version_passes(tmp_path: Path) -> None:
     prefix = _make_env(tmp_path, f"version_info = {_FULL_VERSION}\nbase-executable = {sys.executable}\n")
 
-    assert _health_check(prefix, _VERSION) is None
+    assert python.health_check(prefix, _VERSION) is None
 
 
+@pytest.mark.usefixtures("patched_pre_commit")
 def test_health_check_no_base_executable_passes(tmp_path: Path) -> None:
     prefix = _make_env(tmp_path, f"version_info = {_MAJOR_MINOR}\n")
 
-    assert _health_check(prefix, _VERSION) is None
+    assert python.health_check(prefix, _VERSION) is None
 
 
+@pytest.mark.usefixtures("patched_pre_commit")
 def test_health_check_version_mismatch_fails(tmp_path: Path) -> None:
-    result = _health_check(_make_env(tmp_path, f"version_info = {_WRONG_VERSION}\n"), _VERSION)
+    result = python.health_check(_make_env(tmp_path, f"version_info = {_WRONG_VERSION}\n"), _VERSION)
 
     assert result is not None
     assert "virtualenv python version did not match created version" in result
     assert f"- expected version: {_WRONG_VERSION}" in result
 
 
+@pytest.mark.usefixtures("patched_pre_commit")
 def test_health_check_base_executable_mismatch_fails(tmp_path: Path) -> None:
     prefix = _make_env(tmp_path, f"version_info = {_MAJOR_MINOR}\nbase-executable = /does/not/exist/python\n")
 
-    result = _health_check(prefix, _VERSION)
+    result = python.health_check(prefix, _VERSION)
 
     assert result is not None
     assert "base executable version did not match created version" in result
 
 
+@pytest.mark.usefixtures("patched_pre_commit")
 def test_health_check_missing_pyvenv_cfg(tmp_path: Path) -> None:
     prefix = _make_env(tmp_path, None)
 
-    assert _health_check(prefix, _VERSION) == "pyvenv.cfg does not exist (old virtualenv?)"
+    assert python.health_check(prefix, _VERSION) == "pyvenv.cfg does not exist (old virtualenv?)"
 
 
 @pytest.mark.parametrize(
@@ -247,7 +265,8 @@ def test_health_check_missing_pyvenv_cfg(tmp_path: Path) -> None:
         pytest.param("version_info = 3=15\n", id="extra-equals"),
     ],
 )
+@pytest.mark.usefixtures("patched_pre_commit")
 def test_health_check_missing_version_info(tmp_path: Path, contents: str) -> None:
     prefix = _make_env(tmp_path, contents)
 
-    assert _health_check(prefix, _VERSION) == "created virtualenv's pyvenv.cfg is missing `version_info`"
+    assert python.health_check(prefix, _VERSION) == "created virtualenv's pyvenv.cfg is missing `version_info`"
