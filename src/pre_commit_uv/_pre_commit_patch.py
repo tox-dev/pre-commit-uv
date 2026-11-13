@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 _ORIGINAL_MAIN = None
 
 
-def _patch() -> None:
+def patch() -> None:
     global _ORIGINAL_MAIN
     if _ORIGINAL_MAIN is not None:  # already patched, nothing more to do
         return
@@ -130,7 +130,7 @@ def _new_main(argv: Sequence[str] | None = None) -> int:
     patched = cast("_PatchablePython", python)
     patched.install_environment = _install_environment
     patched.health_check = _health_check
-    assert _ORIGINAL_MAIN is not None  # ruff:ignore[assert] _patch sets _ORIGINAL_MAIN before installing _new_main
+    assert _ORIGINAL_MAIN is not None  # ruff:ignore[assert] patch sets _ORIGINAL_MAIN before installing _new_main
     return _ORIGINAL_MAIN(argv)
 
 
@@ -145,11 +145,7 @@ def _health_check(prefix: Prefix, version: str) -> str | None:
     if not pyvenv_cfg.exists():
         return "pyvenv.cfg does not exist (old virtualenv?)"
 
-    cfg = {}
-    for line in pyvenv_cfg.read_text(encoding="utf-8").splitlines():
-        key, separator, value = line.partition("=")
-        if separator and "=" not in value:
-            cfg[key.strip()] = value.strip()
+    cfg = python._read_pyvenv_cfg(str(pyvenv_cfg))  # ruff:ignore[private-member-access] no public parser in pre-commit
     if "version_info" not in cfg:
         return "created virtualenv's pyvenv.cfg is missing `version_info`"
     expected = cfg["version_info"].split(".")
@@ -175,3 +171,8 @@ def _version_info(exe: str) -> str:
         return cmd_output(exe, "-S", "-c", prog)[1].strip()
     except CalledProcessError:
         return f"<<error retrieving version from {exe}>>"
+
+
+__all__ = [
+    "patch",
+]
