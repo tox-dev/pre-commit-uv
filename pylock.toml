@@ -495,28 +495,28 @@ sha256 = "25d013af9bf23bc1c7b2b093dff4208166c53a94786c9e447808335ef1185fea"
 
 [[packages]]
 name = "filelock"
-version = "4.2.9"
+version = "4.2.10"
 marker = "\"dev\" in dependency_groups or \"lint\" in dependency_groups or \"project-runtime\" in dependency_groups"
 requires-python = ">=3.11"
 index = "https://pypi.org/simple/"
 
 [packages.sdist]
-name = "filelock-4.2.9.tar.gz"
-upload-time = 2026-11-04T18:37:10.014554+00:00
-url = "https://files.pythonhosted.org/packages/a3/1d/d730c664fcb4f1d264a722722a3134cf0881854f73c1fd58abf87572f232/filelock-4.2.9.tar.gz"
-size = 663116
+name = "filelock-4.2.10.tar.gz"
+upload-time = 2026-11-09T18:58:00.540598+00:00
+url = "https://files.pythonhosted.org/packages/a1/cf/05bcdacabdc0aec7dc8e19d76281bd82325df62dae3b6430e9ba57397689/filelock-4.2.10.tar.gz"
+size = 670595
 
 [packages.sdist.hashes]
-sha256 = "96530b7c538d4ea08493ab067247aab7948c54d8cd622cce711c97cccc5d9896"
+sha256 = "fcc3c0cb8bfe7f4b3bb0e231c04b15dbad068cb3c2515f343d8fde4dce93bd5d"
 
 [[packages.wheels]]
-name = "filelock-4.2.9-py3-none-any.whl"
-upload-time = 2026-11-04T18:37:08.273170+00:00
-url = "https://files.pythonhosted.org/packages/00/05/76184fe08339723d643ab47887a8e4de8f2921ca4e008617ab7490af7857/filelock-4.2.9-py3-none-any.whl"
-size = 164734
+name = "filelock-4.2.10-py3-none-any.whl"
+upload-time = 2026-11-09T18:57:59.088963+00:00
+url = "https://files.pythonhosted.org/packages/ef/90/5d0096a325aa0f83ba7a3968bfb485b67e32c947bdf9cd0fcb4b485be718/filelock-4.2.10-py3-none-any.whl"
+size = 218040
 
 [packages.wheels.hashes]
-sha256 = "a379c50a729e5b68c8519a4d26489f755d9769960a236ecd838190e2a78db2e9"
+sha256 = "9479aaeb4db20b5a53e3da28493edd24720b66b8a0b84030aa56ccdf243d6857"
 
 [[packages]]
 name = "hatch-fancy-pypi-readme"
@@ -2245,7 +2245,7 @@ sha256 = "04e15df7083642d5b791e51f597cffef8a92d770ecf5160c529b5a7b53b40100"
 
 [tool.nab]
 nab-version = "0.0.27"
-created-at = 2026-11-16T08:07:17.280223+00:00
+created-at = 2026-11-16T19:03:04.609644+00:00
 command-line = [
     "nab",
     "lock",
@@ -2263,6 +2263,6 @@ platforms = [
 
 [tool.nab.validation]
 version = 1
-all-inputs-sha256 = "604289661e6c0e55978e56f378ce3f8ec10136351dea936f1a36fd15ba9add29"
-selection-inputs-sha256 = "37abe9f7379abf0796a34dcd2bd2064232ccd5a9ba47fa0d5784ba78d80a038d"
-contents-sha256 = "491f66a3cd4584a437e0b94910d7f3d54b1c74231dcf9b5f42a7b7875eaf5bb3"
+all-inputs-sha256 = "799c0b15eac1cc5f58fc4acf5c779a30d19431ae9c0b51f33e74c20350ee3723"
+selection-inputs-sha256 = "1030ee0a80be434b618c7c6fad095fe27863025261f6d72f062a21e9094d0deb"
+contents-sha256 = "2a3a988ed38d3eff2c285480cdedd2081c088f8980e903458da2f0e44ccf9f38"
