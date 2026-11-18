@@ -2,6 +2,10 @@
 
 from __future__ import annotations
 
+__lazy_modules__ = [
+    "pathlib",
+]
+
 # only import built-ins at top level to avoid interpreter startup overhead
 import os
 import pathlib
