@@ -36,16 +36,11 @@ def patch() -> None:
 
         _ORIGINAL_MAIN, main.main = main.main, _new_main  # ty: ignore[invalid-assignment] pre-commit exposes main as a plain function we patch on purpose
         if "--version" in sys.argv:
-            from importlib.metadata import version as _metadata_version  # ruff:ignore[import-outside-top-level] loaded only when pre-commit runs, keeping startup cheap
+            from importlib.metadata import version  # ruff:ignore[import-outside-top-level] loaded only when pre-commit runs, keeping startup cheap
 
             from pre_commit import constants  # ruff:ignore[import-outside-top-level] loaded only when pre-commit runs, keeping startup cheap
 
-            constants.VERSION = (
-                f"{constants.VERSION} ("
-                f"pre-commit-uv={_metadata_version('pre-commit-uv')}, "
-                f"uv={_metadata_version('uv')}"
-                f")"
-            )
+            constants.VERSION = f"{constants.VERSION} (pre-commit-uv={version('pre-commit-uv')}, uv={version('uv')})"
 
 
 def _is_calling_pre_commit() -> bool:
@@ -121,15 +116,15 @@ def _new_main(argv: Sequence[str] | None = None) -> int:
 
     @cache
     def self_version() -> str:
-        from importlib.metadata import version as _metadata_version  # ruff:ignore[import-outside-top-level] loaded only when pre-commit runs, keeping startup cheap
+        from importlib.metadata import version  # ruff:ignore[import-outside-top-level] loaded only when pre-commit runs, keeping startup cheap
 
-        return _metadata_version("pre-commit-uv")
+        return version("pre-commit-uv")
 
     @cache
     def uv_version() -> str:
-        from importlib.metadata import version as _metadata_version  # ruff:ignore[import-outside-top-level] loaded only when pre-commit runs, keeping startup cheap
+        from importlib.metadata import version  # ruff:ignore[import-outside-top-level] loaded only when pre-commit runs, keeping startup cheap
 
-        return _metadata_version("uv")
+        return version("uv")
 
     patched = cast("_PatchablePython", python)
     patched.install_environment = _install_environment
